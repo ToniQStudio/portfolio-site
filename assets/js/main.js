@@ -3,12 +3,17 @@
 
   // Header scroll state
   const navbar = document.getElementById('navbar');
+  const isWorkPage = document.documentElement.classList.contains('work');
   const onScroll = () => {
-    if (window.scrollY > 40) navbar.classList.add('scrolled');
+    if (!isWorkPage && window.scrollY > 40) navbar.classList.add('scrolled');
     else navbar.classList.remove('scrolled');
   };
   onScroll();
   addEventListener('scroll', onScroll, { passive: true });
+
+  // Footer copyright: stamp the current year so the markup never goes stale
+  const yearEl = document.querySelector('.sfooter-year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   // Fit the top line width to the name width
   const heroName = document.querySelector('.hero-name');
@@ -55,6 +60,22 @@
     revealEls.forEach((el) => io.observe(el));
   } else {
     revealEls.forEach((el) => el.classList.add('in'));
+  }
+
+  // Editorial figures that pan sideways on narrow screens should only enter the
+  // tab order while they actually scroll, so a desktop reader isn't tabbed into
+  // a region that has nothing to pan.
+  const pans = document.querySelectorAll('.ed-fig--pan');
+  if (pans.length) {
+    const syncPans = () => {
+      pans.forEach((el) => {
+        if (el.scrollWidth > el.clientWidth + 1) el.setAttribute('tabindex', '0');
+        else el.removeAttribute('tabindex');
+      });
+    };
+    syncPans();
+    addEventListener('resize', syncPans);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncPans);
   }
 
   // Stat count-up
@@ -207,5 +228,261 @@
         });
       }, { rootMargin: '150px 0px' }).observe(el);
     });
+  }
+
+  // Work page: full-screen panels driven by a custom controller — exactly one
+  // screen per gesture, in both directions. The incoming panel rides up from
+  // below and layers on top; its gradient drifts up a third of the way while the
+  // copy is pushed off the top edge at the speed of the incoming panel's climb.
+  const snap = document.getElementById('snap');
+  if (snap) {
+    const panels = Array.from(snap.querySelectorAll('.panel'));
+    const dots = Array.from(document.querySelectorAll('.dots .dot'));
+    const inners = panels.map((p) => p.querySelector('.panel-inner'));
+    const bgs = panels.map((p) => p.querySelector('.panel-bg'));
+    const icons = panels.map((p) => p.querySelector('.panel-icon'));
+    const btns = panels.map((p) => p.querySelector('.panel-btn'));
+    const lastShift = new Array(panels.length).fill(null);
+    const lastBg = new Array(panels.length).fill(null);
+    const lastPar = new Array(panels.length).fill(null);
+    const lastBtn = new Array(panels.length).fill(null);
+
+    const RIDE = 12;        // % the incoming panel lags below before it settles
+    const BG_DRIFT = 1 / 6; // how far the background drifts up during a swap
+    const SWIPE = 40;       // px a touch must travel before it counts as a swipe
+    const LOCK = 1200;      // ms before another gesture is accepted
+    const SWAP = 1000;      // ms a one-screen move takes
+    const SWAP_MAX = 2400;  // ms cap for multi-panel jumps
+    const easeInOut = (t) => t < .5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+    const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
+
+    const setActive = (i) => {
+      if (i < 0) return;
+      dots.forEach((d, k) => {
+        const on = k === i;
+        d.classList.toggle('is-active', on);
+        if (on) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
+      if (navbar) {
+        const onLight = !!(panels[i] && panels[i].classList.contains('panel--light'));
+        navbar.classList.toggle('navbar--on-light', onLight);
+      }
+    };
+
+    let active = -1;
+    let target = 0;
+    let animating = false;
+    let lockUntil = 0;
+    let ticking = false;
+    let rafId = 0;
+
+    // measure the real panel height (100vh) rather than innerHeight, so the maths
+    // stays right on mobile where the visible viewport differs
+    let vh = window.innerHeight || 1;
+    const measure = () => {
+      vh = (panels[0] && panels[0].getBoundingClientRect().height) || window.innerHeight || 1;
+    };
+    measure();
+
+    // Snap offsets: one per panel, plus the footer when the page has one. Without
+    // a footer the last panel is simply the end of the page — no wrap-around.
+    const footerEl = document.querySelector('.sfooter');
+    const footerIndex = footerEl ? panels.length : -1;
+    const footerOffset = () => Math.max(0,
+      document.documentElement.scrollHeight - document.documentElement.clientHeight);
+    const positions = () => {
+      const ps = panels.map((_, i) => i * vh);
+      if (footerEl) ps.push(Math.max(footerOffset(), (panels.length - 1) * vh));
+      return ps;
+    };
+
+    const nearestIndex = (y) => {
+      const ps = positions();
+      let best = 0;
+      let bestD = Infinity;
+      for (let i = 0; i < ps.length; i++) {
+        const d = Math.abs(ps[i] - y);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      return best;
+    };
+
+    // A footer taller than the viewport cannot be shown in one screen, so past
+    // the last panel we hand scrolling back to the browser instead of snapping.
+    const footerFree = () => !!footerEl && footerOffset() > footerIndex * vh &&
+      window.scrollY >= footerIndex * vh - 2;
+
+    const paint = () => {
+      const h = vh;
+      const center = window.scrollY / h;
+      panels.forEach((p, i) => {
+        const inner = inners[i];
+        if (reducedMotion) {
+          if (inner && lastShift[i] !== '') { inner.style.transform = ''; lastShift[i] = ''; }
+          if (bgs[i] && lastBg[i] !== '') { bgs[i].style.transform = ''; lastBg[i] = ''; }
+          if (icons[i] && lastPar[i] !== '') { icons[i].style.removeProperty('--par'); lastPar[i] = ''; }
+          if (btns[i] && lastBtn[i] !== '') { btns[i].style.removeProperty('--btn-par'); lastBtn[i] = ''; }
+          return;
+        }
+        // only the panels touching the viewport need per-frame updates
+        if (i < center - 1 || i > center + 1) return;
+
+        const outP = clamp01(center - i);
+        // climb of the incoming panel's top edge, measured from the start of the swap
+        const climb = outP * h + (RIDE / 100) * h * easeInOut(outP);
+
+        if (inner) {
+          const shift = outP > 0 ? 'translate3d(0,' + (-climb).toFixed(1) + 'px,0)' : '';
+          if (lastShift[i] !== shift) { inner.style.transform = shift; lastShift[i] = shift; }
+        }
+
+        // the gradient (and the icon on it) drifts up a third as fast as the copy
+        const drift = (-BG_DRIFT * outP * h).toFixed(1);
+        if (bgs[i]) {
+          const t = 'translate3d(0,' + drift + 'px,0)';
+          if (lastBg[i] !== t) { bgs[i].style.transform = t; lastBg[i] = t; }
+        }
+        if (icons[i]) {
+          const v = drift + 'px';
+          if (lastPar[i] !== v) { icons[i].style.setProperty('--par', v); lastPar[i] = v; }
+        }
+
+        // the button rides up in lockstep with the copy
+        if (btns[i]) {
+          const v = (-climb).toFixed(1) + 'px';
+          if (lastBtn[i] !== v) { btns[i].style.setProperty('--btn-par', v); lastBtn[i] = v; }
+        }
+      });
+
+      const idx = nearestIndex(window.scrollY);
+      if (!animating) target = idx;
+      if (idx !== active) { active = idx; setActive(idx); }
+    };
+
+    const onWorkScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      const run = () => {
+        if (!ticking) return;
+        ticking = false;
+        paint();
+      };
+      requestAnimationFrame(run);
+      window.setTimeout(run, 60);
+    };
+    addEventListener('scroll', onWorkScroll, { passive: true });
+
+    // on resize the panels change height, so re-anchor instantly to the current
+    // one — otherwise a sliver of the neighbouring panel stays visible
+    const onResize = () => {
+      measure();
+      cancelAnimationFrame(rafId);
+      animating = false;
+      const ps = positions();
+      window.scrollTo({ top: ps[Math.min(target, ps.length - 1)] || 0, behavior: 'instant' });
+      paint();
+    };
+    addEventListener('resize', onResize);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', onResize);
+
+    // rAF-driven scroll so the swap eases in and out instead of using the
+    // browser's fixed-duration smooth scroll
+    const animateTo = (to) => {
+      cancelAnimationFrame(rafId);
+      const from = window.scrollY;
+      const dist = to - from;
+      if (Math.abs(dist) < 1) { animating = false; paint(); return; }
+      const dur = Math.min(SWAP_MAX, SWAP * Math.abs(dist) / vh);
+      const t0 = performance.now();
+      animating = true;
+      const frame = (now) => {
+        const p = Math.min((now - t0) / dur, 1);
+        window.scrollTo({ top: from + dist * easeInOut(p), behavior: 'instant' });
+        if (p < 1) rafId = requestAnimationFrame(frame);
+        else { animating = false; paint(); }
+      };
+      rafId = requestAnimationFrame(frame);
+    };
+
+    const goTo = (i) => {
+      const ps = positions();
+      const t = Math.min(Math.max(i, 0), ps.length - 1);
+      target = t;
+      if (t < panels.length) history.replaceState(null, '', '#' + panels[t].id);
+      setActive(t);
+      if (reducedMotion) {
+        cancelAnimationFrame(rafId);
+        animating = false;
+        window.scrollTo({ top: ps[t], behavior: 'instant' });
+        paint();
+        return;
+      }
+      animateTo(ps[t]);
+    };
+
+    // one panel per gesture; the step past the last panel reveals the footer
+    const step = (dir) => {
+      const next = target + dir;
+      if (next < 0) return;
+      goTo(next);
+    };
+
+    const gesture = () => {
+      const now = performance.now();
+      if (now < lockUntil) return false;
+      lockUntil = now + LOCK;
+      return true;
+    };
+
+    addEventListener('wheel', (e) => {
+      if (reducedMotion || e.ctrlKey) return; // let pinch-zoom through
+      if (!animating && footerFree()) return;  // native scroll inside the footer
+      e.preventDefault();
+      if (animating || Math.abs(e.deltaY) < 2) return;
+      if (!gesture()) return;
+      step(e.deltaY > 0 ? 1 : -1);
+    }, { passive: false });
+
+    let touchY = 0;
+    addEventListener('touchstart', (e) => {
+      touchY = e.touches[0] ? e.touches[0].clientY : 0;
+    }, { passive: true });
+    addEventListener('touchmove', (e) => {
+      if (reducedMotion || e.touches.length > 1) return; // keep pinch-zoom working
+      if (!animating && footerFree()) return;            // native scroll inside the footer
+      e.preventDefault();
+    }, { passive: false });
+    addEventListener('touchend', (e) => {
+      const t = e.changedTouches && e.changedTouches[0];
+      if (!t || reducedMotion) return;
+      if (!animating && footerFree()) return;
+      const dy = touchY - t.clientY;
+      if (Math.abs(dy) < SWIPE) return;
+      if (!gesture()) return;
+      step(dy > 0 ? 1 : -1);
+    }, { passive: true });
+
+    addEventListener('keydown', (e) => {
+      if (reducedMotion) return;
+      if (e.key === 'Home') { e.preventDefault(); goTo(0); return; }
+      if (e.key === 'End') { e.preventDefault(); goTo(positions().length - 1); return; }
+      const dir = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 }[e.key];
+      if (!dir) return;
+      e.preventDefault();
+      step(dir);
+    });
+
+    dots.forEach((d, i) => {
+      d.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (panels[i]) goTo(i);
+      });
+    });
+
+    const toTop = document.getElementById('toTop');
+    if (toTop) toTop.addEventListener('click', () => goTo(0));
+
+    paint();
   }
 })();

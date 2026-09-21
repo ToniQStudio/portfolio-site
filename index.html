@@ -18,9 +18,9 @@
 		<a class="logo" href="index.html">Антон Миньков</a>
 		<div class="menu">
 			<a href="design.html">Дизайн</a>
-			<a href="#">Управление</a>
-			<a href="#">Контакты</a>
-			<a href="#">ToniQ Studio</a>
+			<a href="upravlenie.html">Менеджмент</a>
+			<a href="kontakty.html">Контакты</a>
+			<a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>
 		</div>
 	</nav>
 	<button class="hamburger" id="hamburger" aria-label="Меню"><span></span></button>
@@ -28,9 +28,9 @@
 
 <div class="overlay">
 	<a href="design.html">Дизайн</a>
-	<a href="#">Управление</a>
-	<a href="#">Контакты</a>
-	<a href="#">ToniQ Studio</a>
+	<a href="upravlenie.html">Менеджмент</a>
+	<a href="kontakty.html">Контакты</a>
+	<a href="toniq-studio.html">ToniQ Studio</a>
 </div>
 
 <main>
@@ -57,7 +57,7 @@
 			<a class="contact-link" href="mailto:minkov.work@gmail.com">minkov.work@gmail.com</a>
 			<span class="contact-sep" aria-hidden="true"></span>
 			<a class="contact-link contact-link--tg" href="https://t.me/tony_newton" target="_blank" rel="noopener">
-				<span>@tony_newton</span>
+				<span>тг. @tony_newton</span>
 				<span class="contact-qr" aria-hidden="true">
 					<img src="assets/img/telegram-qr.svg" alt="" width="148" height="148">
 				</span>
@@ -72,8 +72,8 @@
 	<section class="expertise" id="expertise">
 		<div class="container">
 			<div class="ex-head reveal">
-				<p class="ex-kicker">Что я умею и&nbsp;делаю</p>
-				<h2 class="ex-title"><span>Проектирую цифровые экосистемы</span> <span>Руковожу дизайн-командами</span></h2>
+				<p class="ex-kicker">Что я делаю</p>
+				<h2 class="ex-title"><span class="ex-title-line1">Проектирую цифровые продукты и&nbsp;экосистемы</span> <span>Руковожу дизайн-командами</span></h2>
 			</div>
 
 			<div class="skills">
@@ -147,53 +147,75 @@
 			</div>
 
 			<div class="pcards-grid">
-				<div class="pcards-col">
-					<article class="pcard reveal">
-						<a class="pcard-link" href="design.html#gosuslugi">
-							<img class="pcard-logo pcard-logo--gosuslugi" src="assets/logos/gosuslugi.svg" alt="Госуслуги" width="230" height="36" loading="lazy" decoding="async">
-							<h3 class="pcard-title">Единый портал государственных и&nbsp;муниципальных услуг, суперсервисы и&nbsp;ДЭГ</h3>
-							<p class="pcard-desc">Спроектировал UX/UI для&nbsp;модулей экосистемы ЕПГУ и&nbsp;платформ дистанционного электронного голосования, адаптировал сценарии под&nbsp;федеральные пиковые нагрузки. Оптимизировал CJM на&nbsp;всех этапах и&nbsp;реализовал поддержку цифровой доступности по&nbsp;ГОСТ/WCAG</p>
-							<span class="pcard-media">
-								<span class="cover-art art-gosuslugi" style="--bg:linear-gradient(135deg,#0D4CD3 0%,#6D9CFF 100%);">
-									<span class="art-bg" style="background:linear-gradient(135deg,#0D4CD3 0%,#6D9CFF 100%);"></span>
-									<span class="gs-blob"></span>
-									<span class="gs-blob2"></span>
-									<span class="gs-blob3"></span>
-									<span class="gs-hex h1"></span>
-									<span class="gs-hex h2 f"></span>
-									<span class="gs-hex h3 dim"></span>
-									<span class="gs-hex h4"></span>
-									<span class="gs-hex h5"></span>
-									<span class="gs-hex h6 dim"></span>
-									<span class="gs-hex h7 f"></span>
-									<span class="gs-hex h8"></span>
-									<span class="gs-hex h9"></span>
-									<span class="gs-hex h10 dim"></span>
-									<span class="gs-hex h11"></span>
-									<span class="gs-hex h12 dim"></span>
-									<img class="gs-ui" src="assets/img/gosuslugi-ui.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
-									<span class="max-glow"></span>
-									<span class="max-shadow"></span>
-									<picture>
-										<source media="(prefers-reduced-motion: reduce)" srcset="assets/img/max-greet.webp">
-										<img class="max-robot max-robot--live" src="assets/img/max-anim.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
-									</picture>
-									<span class="max-spark s1" aria-hidden="true"></span>
-									<span class="max-spark s2" aria-hidden="true"></span>
-									<span class="max-spark s3" aria-hidden="true"></span>
-									<span class="max-spark s4" aria-hidden="true"></span>
-									<span class="max-spark s5" aria-hidden="true"></span>
-									<span class="max-spark s6" aria-hidden="true"></span>
-								</span>
-							</span>
-						</a>
-					</article>
 
-					<article class="pcard pcard--bleed reveal">
+				<article class="pcard pcard--wide pcard--gosuslugi reveal">
+					<div class="pcard-link">
+						<img class="pcard-logo pcard-logo--gosuslugi" src="assets/logos/gosuslugi.svg" alt="Госуслуги" width="230" height="36" loading="lazy" decoding="async">
+						<h3 class="pcard-title">Единый портал государственных и&nbsp;муниципальных услуг,<br>суперсервисы и&nbsp;дистанционное электронное голосование</h3>
+						<p class="pcard-desc">Спроектировал UX/UI для&nbsp;модулей экосистемы ЕПГУ и&nbsp;платформ дистанционного электронного голосования, адаптировал сценарии под&nbsp;федеральные пиковые нагрузки. Оптимизировал CJM на&nbsp;всех этапах и&nbsp;реализовал поддержку цифровой доступности по&nbsp;ГОСТ/WCAG</p>
+						<span class="pcard-media">
+							<span class="cover-art art-gosuslugi" style="--bg:linear-gradient(135deg,#0D4CD3 0%,#6D9CFF 100%);">
+								<span class="art-bg" style="background:linear-gradient(135deg,#0D4CD3 0%,#6D9CFF 100%);"></span>
+								<span class="gs-blob"></span>
+								<span class="gs-blob2"></span>
+								<span class="gs-blob3"></span>
+								<span class="gs-hex h1"></span>
+								<span class="gs-hex h2 f"></span>
+								<span class="gs-hex h3 dim"></span>
+								<span class="gs-hex h4"></span>
+								<span class="gs-hex h5"></span>
+								<span class="gs-hex h6 dim"></span>
+								<span class="gs-hex h7 f"></span>
+								<span class="gs-hex h8"></span>
+								<span class="gs-hex h9"></span>
+								<span class="gs-hex h10 dim"></span>
+								<span class="gs-hex h11"></span>
+								<span class="gs-hex h12 dim"></span>
+								<img class="gs-ui" src="assets/img/gosuslugi-ui.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
+								<span class="max-glow"></span>
+								<span class="max-shadow"></span>
+								<picture>
+									<source media="(prefers-reduced-motion: reduce)" srcset="assets/img/max-greet.webp">
+									<img class="max-robot max-robot--live" src="assets/img/max-anim.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
+								</picture>
+								<span class="max-spark s1" aria-hidden="true"></span>
+								<span class="max-spark s2" aria-hidden="true"></span>
+								<span class="max-spark s3" aria-hidden="true"></span>
+								<span class="max-spark s4" aria-hidden="true"></span>
+								<span class="max-spark s5" aria-hidden="true"></span>
+								<span class="max-spark s6" aria-hidden="true"></span>
+							</span>
+						</span>
+						<a class="pcard-domain pcard-domain--ext" href="https://www.gosuslugi.ru/" target="_blank" rel="noopener">gosuslugi.ru</a>
+						<a class="pcard-stretch" href="design.html#gosuslugi" aria-label="Госуслуги — смотреть проект"></a>
+					</div>
+				</article>
+
+				<article class="pcard pcard--wide pcard--sfera reveal">
+					<div class="pcard-link">
+						<img class="pcard-logo pcard-logo--sfera" src="assets/logos/sfera.svg" alt="Сфера" width="88" height="95" loading="lazy" decoding="async">
+						<h3 class="pcard-title">Сфера: ИТ-конвейер и&nbsp;передовые практики<br>для&nbsp;разработки ПО</h3>
+						<span class="pcard-media">
+							<span class="cover-art sfera-video-cover">
+								<video class="sfera-video" poster="assets/video/sfera-poster.webp" muted loop playsinline preload="none" aria-hidden="true">
+									<source data-src="assets/video/sfera-720p.mp4" type="video/mp4">
+									<source data-src="assets/video/sfera-720p.webm" type="video/webm">
+								</video>
+							</span>
+						</span>
+						<p class="pcard-desc">Разработал UX и&nbsp;UI для&nbsp;нескольких&nbsp;модулей платформы «Сфера» (ВТБ): провёл UX-аналитику, экспертную оценку и&nbsp;конкурентный анализ, выявил ключевые проблемы пользователей, что позволило сократить время выполнения операции на&nbsp;<span class="num">25%</span> и&nbsp;затраты на&nbsp;лицензирование, реализовать импортозамещение ПО и&nbsp;обеспечить соответствие требованиям регуляторов</p>
+						<a class="pcard-domain pcard-domain--ext" href="https://www.t1.ru/products/platforma-sfera" target="_blank" rel="noopener">t1.ru/products/platforma-sfera</a>
+						<a class="pcard-stretch" href="design.html#innotech" aria-label="Сфера — смотреть проект"></a>
+					</div>
+				</article>
+
+				<div class="pcards-split">
+
+					<article class="pcard pcard--bleed pcard--butik reveal">
 						<a class="pcard-link" href="design.html#butik">
-							<img class="pcard-logo pcard-logo--butik" src="assets/logos/butik.webp" alt="Butik" width="174" height="35" loading="lazy" decoding="async">
+							<img class="pcard-bigmark" src="assets/logos/butik.webp" alt="" aria-hidden="true" width="174" height="35" loading="lazy" decoding="async">
 							<h3 class="pcard-title">Фиджитал-универмаг и&nbsp;экосистема цифровых продуктов</h3>
-							<p class="pcard-desc">Руководил разработкой UX/UI-экосистемы цифровых продуктов: от&nbsp;стратегии до&nbsp;запуска. Первый в&nbsp;РФ фиджитал-универмаг. Конверсия <span class="num">2,36%</span>, средний чек <span class="num">+52%</span>, сервис <span class="num">−20%</span></p>
+							<p class="pcard-desc">Руководил разработкой UX/UI-экосистемы цифровых продуктов: от&nbsp;стратегии до&nbsp;запуска. Первый в&nbsp;РФ фиджитал-универмаг. Конверсия 2,36%, средний чек +52%, время обслуживания клиентов −20%</p>
 							<span class="pcard-media">
 								<span class="cover-art art-butik art-butik--clear">
 									<span class="butik-slides">
@@ -217,109 +239,73 @@
 							</span>
 						</a>
 					</article>
-				</div>
 
-				<div class="pcards-col">
-					<article class="pcard pcard--half pcard--em reveal">
-						<a class="pcard-link" href="design.html">
+					<article class="pcard pcard--em reveal">
+						<span class="ce-dots" aria-hidden="true"></span>
+						<span class="ce-balls" aria-hidden="true">
+							<span class="ce-ball b1"></span>
+							<span class="ce-ball b2"></span>
+							<span class="ce-ball b3"></span>
+							<span class="ce-ball b4"></span>
+							<span class="ce-ball b5"></span>
+							<span class="ce-ball b6"></span>
+							<span class="ce-ball b7"></span>
+							<span class="ce-ball b8"></span>
+							<span class="ce-ball b9"></span>
+							<span class="ce-ball b10"></span>
+							<span class="ce-ball b11"></span>
+							<span class="ce-ball b12"></span>
+							<span class="ce-ball b13"></span>
+							<span class="ce-ball b14"></span>
+							<span class="ce-ball b15"></span>
+							<span class="ce-ball b16"></span>
+						</span>
+						<span class="ce-device">
+							<img class="ce-frame" src="assets/img/expertme-macbook.png" alt="" aria-hidden="true" width="413" height="330" loading="lazy" decoding="async">
+							<span class="ce-window">
+								<span class="ce-scroll"><img class="ce-page" src="assets/img/expertme-site.webp" alt="" aria-hidden="true" width="769" height="2901" loading="lazy" decoding="async"></span>
+							</span>
+						</span>
+						<div class="pcard-link">
+							<img class="ce-word" src="assets/logos/expertme-wordmark-3e34a8.png" alt="ExpertMe" width="470" height="120" loading="lazy" decoding="async">
+							<a class="pcard-domain pcard-domain--center pcard-domain--ext" href="https://expertme.ru/" target="_blank" rel="noopener">expertme.ru</a>
+							<a class="pcard-stretch" href="design.html" aria-label="ExpertMe — смотреть проект"></a>
+						</div>
+					</article>
+
+					<article class="pcard pcard--half pcard--rosatom reveal">
+						<a class="pcard-link" href="design.html#p06">
 							<span class="pcard-media">
-								<span class="cover-art cover-expertme">
-									<span class="ce-dots"></span>
-									<span class="ce-ball b1"></span>
-									<span class="ce-ball b2"></span>
-									<span class="ce-ball b3"></span>
-									<span class="ce-ball b4"></span>
-									<span class="ce-ball b5"></span>
-									<span class="ce-ball b6"></span>
-									<span class="ce-ball b7"></span>
-									<span class="ce-ball b8"></span>
-									<span class="ce-ball b9"></span>
-									<span class="ce-ball b10"></span>
-									<span class="ce-ball b11"></span>
-									<span class="ce-ball b12"></span>
-									<span class="ce-ball b13"></span>
-									<span class="ce-ball b14"></span>
-									<span class="ce-ball b15"></span>
-									<span class="ce-ball b16"></span>
-									<span class="ce-window">
-										<img class="ce-frame" src="assets/img/group6.webp" alt="" aria-hidden="true" width="1106" height="700" loading="lazy" decoding="async">
-										<span class="ce-scroll"><img class="ce-page" src="assets/img/expertme-site.webp" alt="" aria-hidden="true" width="820" height="2901" loading="lazy" decoding="async"></span>
+								<span class="cover-art cover-rosatom">
+									<img class="ra-logo" src="assets/logos/rosatom.svg" alt="Росэнергоатом" width="214" height="64" loading="lazy" decoding="async">
+									<span class="ra-screen" aria-hidden="true">
+										<img src="assets/img/rosatom-dashboard.webp" alt="" width="1600" height="673" loading="lazy" decoding="async">
 									</span>
-									<img class="ce-word" src="assets/logos/expertme-wordmark-3e34a8.png" alt="ExpertMe" width="470" height="120" loading="lazy" decoding="async">
 								</span>
 							</span>
 						</a>
 					</article>
 
-					<article class="pcard reveal">
-						<a class="pcard-link" href="design.html#innotech">
-							<img class="pcard-logo pcard-logo--sfera" src="assets/logos/sfera.svg" alt="Сфера" width="88" height="95" loading="lazy" decoding="async">
-							<h3 class="pcard-title">Сфера: ИТ-конвейер и&nbsp;передовые практики для&nbsp;разработки ПО</h3>
-							<p class="pcard-desc">Разработал UX и&nbsp;UI для&nbsp;модулей платформы «Сфера» (ВТБ): провёл UX-аналитику, экспертную оценку и&nbsp;конкурентный анализ, выявил ключевые проблемы пользователей, что позволило сократить время выполнения операции на&nbsp;<span class="num">25%</span> и&nbsp;затраты на&nbsp;лицензирование, реализовать импортозамещение ПО и&nbsp;обеспечить соответствие требованиям регуляторов</p>
-							<span class="pcard-media">
-							<span class="cover-art sfera-video-cover">
-								<video class="sfera-video" poster="assets/video/sfera-poster.webp" muted loop playsinline preload="none" aria-hidden="true">
-									<source data-src="assets/video/sfera-720p.mp4" type="video/mp4">
-									<source data-src="assets/video/sfera-720p.webm" type="video/webm">
-								</video>
-							</span>
-							</span>
-						</a>
-					</article>
-
-					<article class="pcard pcard--half pcard--skill reveal">
-						<a class="pcard-link" href="#">
-							<span class="pcard-media">
-								<span class="cover-art cover-skill">
-									<span class="sk-grid" aria-hidden="true"></span>
-									<svg class="sk-net" viewBox="0 0 300 200" aria-hidden="true">
-										<g class="sk-lines">
-											<line x1="40" y1="42" x2="112" y2="30"/>
-											<line x1="112" y1="30" x2="172" y2="64"/>
-											<line x1="172" y1="64" x2="250" y2="92"/>
-											<line x1="40" y1="42" x2="62" y2="116"/>
-											<line x1="62" y1="116" x2="132" y2="124"/>
-											<line x1="132" y1="124" x2="172" y2="64"/>
-											<line x1="62" y1="116" x2="92" y2="174"/>
-											<line x1="92" y1="174" x2="132" y2="124"/>
-											<line x1="172" y1="64" x2="132" y2="124"/>
-											<line x1="250" y1="92" x2="172" y2="64"/>
-										</g>
-										<g class="sk-nodes">
-											<circle cx="40" cy="42" r="9" style="--d:0s"/>
-											<circle cx="112" cy="30" r="7" style="--d:-.3s"/>
-											<circle cx="172" cy="64" r="11" style="--d:-.6s"/>
-											<circle cx="250" cy="92" r="8" style="--d:-.9s"/>
-											<circle cx="62" cy="116" r="10" style="--d:-1.2s"/>
-											<circle cx="132" cy="124" r="8" style="--d:-1.5s"/>
-											<circle cx="92" cy="174" r="9" style="--d:-1.8s"/>
-										</g>
-									</svg>
-									<img class="sk-logo" src="assets/logos/skillstech.svg" alt="СкиллсТек" width="140" height="23" loading="lazy" decoding="async">
-									<img class="sk-hero" src="assets/img/skillstech-hero.webp" alt="" aria-hidden="true" width="893" height="707" loading="lazy" decoding="async">
-								</span>
-							</span>
-						</a>
-					</article>
 				</div>
+
 			</div>
 
 			<div class="stats reveal">
 				<div class="stats-row">
 					<div class="stat">
-						<p class="stat-num" data-count="25" data-suffix="-50%">25-50%</p>
-						<p class="stat-label">Рост конверсии</p>
-						<p class="stat-note">Снижение затрат времени на&nbsp;40%, рост среднего чека на&nbsp;50%</p>
-					</div>
-					<div class="stat">
-						<p class="stat-num" data-count="5" data-suffix="+">5+</p>
-						<p class="stat-label">Индустрий в&nbsp;портфолио</p>
-						<p class="stat-note">GovTech, FinTech, HR-tech, E-Comm, Enterprise/B2B</p>
-					</div>
-					<div class="stat">
 						<p class="stat-num" data-count="15" data-suffix="+">15+</p>
 						<p class="stat-label">Лет в&nbsp;продуктовом дизайне</p>
 						<p class="stat-note">Полный цикл: от&nbsp;исследований до&nbsp;внедрения</p>
+					</div>
+					<div class="stat">
+						<p class="stat-num" data-count="5" data-suffix="+">5+</p>
+						<p class="stat-label">Сфер бизнеса в&nbsp;портфолио</p>
+						<p class="stat-note">GovTech, FinTech, HR-tech, E-Comm, Enterprise/B2B</p>
+					</div>
+					<div class="stat">
+						<p class="stat-num" data-count="25" data-suffix="-50%">25-50%</p>
+						<p class="stat-label">Рост конверсии в&nbsp;проекте</p>
+						<p class="stat-note">Снижение временных затрат на&nbsp;40%, рост среднего чека на&nbsp;50%</p>
 					</div>
 				</div>
 			</div>
@@ -330,9 +316,40 @@
 		</div>
 	</section>
 
-	<footer class="footer" id="contact">
-	</footer>
 </main>
+
+			<footer class="sfooter" id="contact">
+		<div class="sfooter-inner">
+			<div class="sfooter-top">
+				<div class="sfooter-brand">
+					<a class="sfooter-name" href="index.html">Антон Миньков</a>
+					<p class="sfooter-role">Руководитель группы продуктового дизайна</p>
+				</div>
+				<nav class="sfooter-nav" aria-label="Разделы сайта">
+					<ul>
+						<li><a href="design.html">Дизайн</a></li>
+						<li><a href="upravlenie.html">Менеджмент</a></li>
+						<li><a href="kontakty.html">Контакты</a></li>
+						<li><a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a></li>
+					</ul>
+				</nav>
+				<div class="sfooter-contact">
+					<ul>
+						<li><a href="mailto:minkov.work@gmail.com">minkov.work@gmail.com</a></li>
+						<li><a href="https://t.me/tony_newton" target="_blank" rel="noopener">Telegram — @tony_newton</a></li>
+					</ul>
+					<span class="sfooter-qr">
+						<img src="assets/img/telegram-qr.svg" alt="" width="112" height="112" loading="lazy" decoding="async">
+					</span>
+				</div>
+			</div>
+			<div class="sfooter-bottom">
+				<p class="sfooter-copy">© <span class="sfooter-year">2026</span> Антон Миньков</p>
+				<p class="sfooter-tagline">Решаю задачи бизнеса через эффективный пользовательский опыт</p>
+			</div>
+		</div>
+	</footer>
+
 
 <script src="assets/js/aurora.js"></script>
 <script src="assets/js/main.js"></script>
