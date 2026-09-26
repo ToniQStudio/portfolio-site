@@ -9,16 +9,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css?v=49">
+<script>/* deep link: keep the page hidden until main.js jumps to the linked panel,
+   so the top panel never flashes before the anchor settles */
+if(/^#p\d+$/.test(location.hash)){document.documentElement.classList.add('work-init');}
+setTimeout(function(){document.documentElement.classList.remove('work-init');},2500);</script>
 </head>
 <body class="work">
+
+<svg class="key-defs" aria-hidden="true" focusable="false" width="0" height="0">
+	<mask id="btn-arrow-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+		<rect x="0" y="0" width="32" height="32" fill="#fff"/>
+		<path d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+	</mask>
+</svg>
 
 <header class="navbar" id="navbar">
 	<nav class="nav">
 		<a class="logo" href="index.html">Антон Миньков</a>
 		<div class="menu">
 			<a href="design.html">Дизайн</a>
-			<a href="upravlenie.html">Менеджмент</a>
+			<a href="management.html">Менеджмент</a>
 			<a href="kontakty.html">Контакты</a>
 			<a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>
 		</div>
@@ -28,28 +39,147 @@
 
 <div class="overlay">
 	<a href="design.html">Дизайн</a>
-	<a href="upravlenie.html">Менеджмент</a>
+	<a href="management.html">Менеджмент</a>
 	<a href="kontakty.html">Контакты</a>
 	<a href="toniq-studio.html">ToniQ Studio</a>
 </div>
 
 <main class="snap" id="snap">
 
-	<section class="panel" id="p01" style="--bg:linear-gradient(45deg,#3258DF 0%,#617FE6 100%)" aria-labelledby="t01">
+	<section class="panel panel--intro" id="intro" style="--bg:#1A1A1A" aria-labelledby="t00">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo panel-logo--color"><img src="assets/logos/gosuslugi-white.svg" alt="Госуслуги" style="height:41.6px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t01">Единый портал государственных и&nbsp;муниципальных услуг, суперсервисы и&nbsp;дистанционное электронное голосование</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Ведущий продуктовый дизайнер</p>
-			</div>
+			<h2 class="panel-intro" id="t00">Design</h2>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
 	</section>
 
-	<section class="panel" id="p02" style="--bg:url('../img/bg/02.webp') center / cover no-repeat; --g1:#531bfc" aria-labelledby="t02">
+	<section class="panel panel--light" id="gosuslugi" style="--bg:#E5ECFB" aria-labelledby="t01">
 		<span class="panel-bg" aria-hidden="true"></span>
+		<div class="panel-inner">
+			<div class="gs-monitor">
+				<img class="gs-monitor-frame" src="assets/img/applemonitor.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+				<div class="gs-screen">
+					<div class="gs-content-clip">
+					<div class="gs-content">
+						<span class="panel-logo panel-logo--color"><img src="assets/logos/gosuslugi.svg" alt="Госуслуги" loading="lazy" decoding="async"></span>
+						<h2 class="panel-title" id="t01">Единый портал государственных<br>и&nbsp;муниципальных услуг,<br>суперсервисы и&nbsp;дистанционное<br>электронное голосование</h2>
+						<p class="panel-role-label">Роль</p>
+						<p class="panel-role">Ведущий продуктовый дизайнер</p>
+					</div>
+					</div>
+					<div class="gs-loader" aria-hidden="true">
+						<span class="gs-loader-pulse">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196.7 212.1">
+							      <path fill-rule="evenodd" clip-rule="evenodd" fill="#1D67AD" d="M196.5,94.9c0-0.1,0-0.3,0-0.4c-0.2-5.1-0.4-9.7-0.7-13.4c0-0.2,0-0.5,0-0.7c0-0.1,0-0.3,0-0.4c0-0.4-0.1-0.7-0.1-1.1c0-0.2,0-0.3,0-0.4c-0.3-3.9-0.5-6.3-0.6-6.5c0-0.4-0.1-0.8-0.1-1.1c0-0.1,0-0.2,0-0.3c-0.1-0.7-0.2-1.3-0.4-2c0-0.1,0-0.2-0.1-0.3c-1.3-6.2-4.3-13-8.2-18.8c-0.1-0.2-0.2-0.4-0.3-0.6c-3.1-4.6-6.5-8.2-10.3-11c-0.5-0.4-12.7-9.4-28.1-18.5c-0.2-0.1-0.4-0.2-0.6-0.3h0C131.9,10.1,118.6,4,117.8,3.7c0,0,0,0,0,0c-0.9-0.4-1.9-0.8-2.9-1.1c-0.1,0-0.2-0.1-0.3-0.1c-0.5-0.2-0.9-0.3-1.4-0.4c-0.1,0-0.2-0.1-0.4-0.1c-1.5-0.4-3-0.8-4.6-1.1c-0.2,0-0.3-0.1-0.5-0.1c-0.5-0.1-0.9-0.1-1.4-0.2c-0.3,0-0.5-0.1-0.8-0.1c-0.4-0.1-0.9-0.1-1.3-0.1c-0.1,0-0.1,0-0.2,0c-0.1,0-0.2,0-0.4,0c-0.7-0.1-1.4-0.1-2.2-0.2c-0.1,0-0.3,0-0.4,0c-0.2,0-0.4,0-0.6,0c-0.2,0-0.5,0-0.7,0c-0.5,0-0.9,0-1.4,0c0,0,0,0,0,0s0,0,0,0c-0.5,0-0.9,0-1.4,0c-0.2,0-0.5,0-0.7,0c-0.2,0-0.4,0-0.6,0c-0.1,0-0.3,0-0.4,0c-0.7,0-1.4,0.1-2.2,0.2c-0.1,0-0.2,0-0.4,0c-0.1,0-0.1,0-0.2,0c-0.4,0-0.9,0.1-1.3,0.1c-0.3,0-0.5,0.1-0.8,0.1C90,0.6,89.5,0.7,89,0.8c-0.2,0-0.3,0.1-0.5,0.1c-1.6,0.3-3.2,0.6-4.6,1.1c-0.1,0-0.2,0.1-0.4,0.1c-0.5,0.1-0.9,0.3-1.4,0.4c-0.1,0-0.2,0.1-0.3,0.1c-1,0.3-2,0.7-2.9,1.1c0,0,0,0,0,0C78.1,4,64.8,10.1,49.6,19h0c-0.2,0.1-0.4,0.2-0.6,0.3C33.6,28.4,21.5,37.4,21,37.8c-3.8,2.8-7.2,6.4-10.3,11c-0.1,0.2-0.2,0.3-0.3,0.6C6.6,55.3,3.6,62,2.3,68.2c0,0.1,0,0.2-0.1,0.3c-0.1,0.7-0.3,1.4-0.4,2c0,0.1,0,0.2,0,0.3c-0.1,0.4-0.1,0.8-0.1,1.1c0,0.2-0.3,2.6-0.6,6.5c0,0.1,0,0.3,0,0.4C1,79.3,1,79.6,1,80c0,0.1,0,0.3,0,0.4c0,0.2,0,0.5,0,0.7c-0.3,3.7-0.5,8.2-0.7,13.4c0,0.1,0,0.3,0,0.4C0.1,98.4,0,102.1,0,106s0.1,7.7,0.2,11.2c0,0.1,0,0.3,0,0.4c0.2,5.1,0.4,9.7,0.7,13.4c0,0.2,0,0.5,0,0.7c0,0.1,0,0.3,0,0.4c0,0.4,0.1,0.7,0.1,1.1c0,0.2,0,0.3,0,0.4c0.3,3.9,0.5,6.3,0.6,6.5c0,0.4,0.1,0.8,0.1,1.1c0,0.1,0,0.2,0,0.3c0.1,0.7,0.2,1.3,0.4,2c0,0.1,0,0.2,0.1,0.3c1.3,6.2,4.3,13,8.2,18.8c0.1,0.2,0.1,0.4,0.2,0.5c3.1,4.6,6.5,8.2,10.3,11c0.5,0.4,12.7,9.4,28.1,18.5c0.8,0.5,1.6,1,2.5,1.4h0c14.3,8.2,26.6,13.8,27.3,14.2c0,0,0,0,0,0c0.9,0.4,1.9,0.8,2.9,1.1c0.1,0,0.3,0.1,0.4,0.1c0.4,0.1,0.9,0.3,1.3,0.4c0.1,0,0.3,0.1,0.4,0.1c1.5,0.4,3,0.8,4.6,1c0.2,0,0.4,0.1,0.5,0.1c0.5,0.1,0.9,0.1,1.4,0.2c0.3,0,0.5,0.1,0.8,0.1c0.4,0.1,0.9,0.1,1.3,0.2c0.1,0,0.1,0,0.2,0c0.1,0,0.2,0,0.3,0c0.7,0.1,1.5,0.1,2.2,0.2c0.1,0,0.3,0,0.4,0c0.2,0,0.4,0,0.6,0c0.2,0,0.5,0,0.7,0c0.5,0,0.9,0,1.4,0c0,0,0,0,0,0s0,0,0,0c0.5,0,0.9,0,1.4,0c0.2,0,0.5,0,0.7,0c0.2,0,0.4,0,0.6,0c0.1,0,0.3,0,0.4,0c0.7,0,1.5-0.1,2.2-0.2c0.1,0,0.2,0,0.3,0c0.1,0,0.1,0,0.2,0c0.4,0,0.9-0.1,1.3-0.2c0.3,0,0.5-0.1,0.8-0.1c0.5-0.1,0.9-0.1,1.4-0.2c0.2,0,0.4-0.1,0.5-0.1c1.6-0.3,3.1-0.6,4.6-1c0.1,0,0.3-0.1,0.4-0.1c0.5-0.1,0.9-0.3,1.3-0.4c0.1,0,0.3-0.1,0.4-0.1c1-0.3,2-0.7,2.9-1.1c0,0,0,0,0,0c0.8-0.3,13-5.9,27.3-14.2h0c0.8-0.5,1.6-0.9,2.5-1.4c15.5-9.1,27.6-18.1,28.1-18.5c3.8-2.8,7.2-6.4,10.3-11c0.1-0.2,0.2-0.3,0.2-0.5c3.9-5.8,6.9-12.5,8.2-18.8c0-0.1,0-0.2,0.1-0.3c0.1-0.7,0.3-1.4,0.4-2c0-0.1,0-0.2,0-0.3c0.1-0.4,0.1-0.8,0.1-1.1c0-0.2,0.3-2.6,0.6-6.5c0-0.1,0-0.3,0-0.4c0-0.4,0.1-0.7,0.1-1.1c0-0.1,0-0.3,0-0.4c0-0.2,0-0.5,0-0.7c0.3-3.7,0.5-8.2,0.7-13.4c0-0.1,0-0.3,0-0.4c0.1-3.5,0.2-7.3,0.2-11.2S196.6,98.4,196.5,94.9z"/>
+							    </svg>
+						</span>
+						<span class="gs-loader-logo">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196.7 212.1">
+							      <path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M196.5,94.9c0-0.1,0-0.3,0-0.4c-0.2-5.1-0.4-9.7-0.7-13.4c0-0.2,0-0.5,0-0.7c0-0.1,0-0.3,0-0.4c0-0.4-0.1-0.7-0.1-1.1c0-0.2,0-0.3,0-0.4c-0.3-3.9-0.5-6.3-0.6-6.5c0-0.4-0.1-0.8-0.1-1.1c0-0.1,0-0.2,0-0.3c-0.1-0.7-0.2-1.3-0.4-2c0-0.1,0-0.2-0.1-0.3c-1.3-6.2-4.3-13-8.2-18.8c-0.1-0.2-0.2-0.4-0.3-0.6c-3.1-4.6-6.5-8.2-10.3-11c-0.5-0.4-12.7-9.4-28.1-18.5c-0.2-0.1-0.4-0.2-0.6-0.3h0C131.9,10.1,118.6,4,117.8,3.7c0,0,0,0,0,0c-0.9-0.4-1.9-0.8-2.9-1.1c-0.1,0-0.2-0.1-0.3-0.1c-0.5-0.2-0.9-0.3-1.4-0.4c-0.1,0-0.2-0.1-0.4-0.1c-1.5-0.4-3-0.8-4.6-1.1c-0.2,0-0.3-0.1-0.5-0.1c-0.5-0.1-0.9-0.1-1.4-0.2c-0.3,0-0.5-0.1-0.8-0.1c-0.4-0.1-0.9-0.1-1.3-0.1c-0.1,0-0.1,0-0.2,0c-0.1,0-0.2,0-0.4,0c-0.7-0.1-1.4-0.1-2.2-0.2c-0.1,0-0.3,0-0.4,0c-0.2,0-0.4,0-0.6,0c-0.2,0-0.5,0-0.7,0c-0.5,0-0.9,0-1.4,0c0,0,0,0,0,0s0,0,0,0c-0.5,0-0.9,0-1.4,0c-0.2,0-0.5,0-0.7,0c-0.2,0-0.4,0-0.6,0c-0.1,0-0.3,0-0.4,0c-0.7,0-1.4,0.1-2.2,0.2c-0.1,0-0.2,0-0.4,0c-0.1,0-0.1,0-0.2,0c-0.4,0-0.9,0.1-1.3,0.1c-0.3,0-0.5,0.1-0.8,0.1C90,0.6,89.5,0.7,89,0.8c-0.2,0-0.3,0.1-0.5,0.1c-1.6,0.3-3.2,0.6-4.6,1.1c-0.1,0-0.2,0.1-0.4,0.1c-0.5,0.1-0.9,0.3-1.4,0.4c-0.1,0-0.2,0.1-0.3,0.1c-1,0.3-2,0.7-2.9,1.1c0,0,0,0,0,0C78.1,4,64.8,10.1,49.6,19h0c-0.2,0.1-0.4,0.2-0.6,0.3C33.6,28.4,21.5,37.4,21,37.8c-3.8,2.8-7.2,6.4-10.3,11c-0.1,0.2-0.2,0.3-0.3,0.6C6.6,55.3,3.6,62,2.3,68.2c0,0.1,0,0.2-0.1,0.3c-0.1,0.7-0.3,1.4-0.4,2c0,0.1,0,0.2,0,0.3c-0.1,0.4-0.1,0.8-0.1,1.1c0,0.2-0.3,2.6-0.6,6.5c0,0.1,0,0.3,0,0.4C1,79.3,1,79.6,1,80c0,0.1,0,0.3,0,0.4c0,0.2,0,0.5,0,0.7c-0.3,3.7-0.5,8.2-0.7,13.4c0,0.1,0,0.3,0,0.4C0.1,98.4,0,102.1,0,106s0.1,7.7,0.2,11.2c0,0.1,0,0.3,0,0.4c0.2,5.1,0.4,9.7,0.7,13.4c0,0.2,0,0.5,0,0.7c0,0.1,0,0.3,0,0.4c0,0.4,0.1,0.7,0.1,1.1c0,0.2,0,0.3,0,0.4c0.3,3.9,0.5,6.3,0.6,6.5c0,0.4,0.1,0.8,0.1,1.1c0,0.1,0,0.2,0,0.3c0.1,0.7,0.2,1.3,0.4,2c0,0.1,0,0.2,0.1,0.3c1.3,6.2,4.3,13,8.2,18.8c0.1,0.2,0.1,0.4,0.2,0.5c3.1,4.6,6.5,8.2,10.3,11c0.5,0.4,12.7,9.4,28.1,18.5c0.8,0.5,1.6,1,2.5,1.4h0c14.3,8.2,26.6,13.8,27.3,14.2c0,0,0,0,0,0c0.9,0.4,1.9,0.8,2.9,1.1c0.1,0,0.3,0.1,0.4,0.1c0.4,0.1,0.9,0.3,1.3,0.4c0.1,0,0.3,0.1,0.4,0.1c1.5,0.4,3,0.8,4.6,1c0.2,0,0.4,0.1,0.5,0.1c0.5,0.1,0.9,0.1,1.4,0.2c0.3,0,0.5,0.1,0.8,0.1c0.4,0.1,0.9,0.1,1.3,0.2c0.1,0,0.1,0,0.2,0c0.1,0,0.2,0,0.3,0c0.7,0.1,1.5,0.1,2.2,0.2c0.1,0,0.3,0,0.4,0c0.2,0,0.4,0,0.6,0c0.2,0,0.5,0,0.7,0c0.5,0,0.9,0,1.4,0c0,0,0,0,0,0s0,0,0,0c0.5,0,0.9,0,1.4,0c0.2,0,0.5,0,0.7,0c0.2,0,0.4,0,0.6,0c0.1,0,0.3,0,0.4,0c0.7,0,1.5-0.1,2.2-0.2c0.1,0,0.2,0,0.3,0c0.1,0,0.1,0,0.2,0c0.4,0,0.9-0.1,1.3-0.2c0.3,0,0.5-0.1,0.8-0.1c0.5-0.1,0.9-0.1,1.4-0.2c0.2,0,0.4-0.1,0.5-0.1c1.6-0.3,3.1-0.6,4.6-1c0.1,0,0.3-0.1,0.4-0.1c0.5-0.1,0.9-0.3,1.3-0.4c0.1,0,0.3-0.1,0.4-0.1c1-0.3,2-0.7,2.9-1.1c0,0,0,0,0,0c0.8-0.3,13-5.9,27.3-14.2h0c0.8-0.5,1.6-0.9,2.5-1.4c15.5-9.1,27.6-18.1,28.1-18.5c3.8-2.8,7.2-6.4,10.3-11c0.1-0.2,0.2-0.3,0.2-0.5c3.9-5.8,6.9-12.5,8.2-18.8c0-0.1,0-0.2,0.1-0.3c0.1-0.7,0.3-1.4,0.4-2c0-0.1,0-0.2,0-0.3c0.1-0.4,0.1-0.8,0.1-1.1c0-0.2,0.3-2.6,0.6-6.5c0-0.1,0-0.3,0-0.4c0-0.4,0.1-0.7,0.1-1.1c0-0.1,0-0.3,0-0.4c0-0.2,0-0.5,0-0.7c0.3-3.7,0.5-8.2,0.7-13.4c0-0.1,0-0.3,0-0.4c0.1-3.5,0.2-7.3,0.2-11.2S196.6,98.4,196.5,94.9z"/>
+							    </svg>
+							<span class="gs-loader-mark">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194 213">
+								        <g>
+								          <g>
+								            <g>
+								              <path fill="#EF3E58" d="M162.8,108.7h-6.4c-0.2,0-0.4,0.2-0.4,0.4v20.3c-1.4,0.4-2.8,0.6-4.4,0.6c-4.2,0-5.2-1.3-5.2-6.9v-14c0-0.2-0.2-0.4-0.4-0.4h-6.4c-0.2,0-0.4,0.2-0.4,0.4v14.7c0,9.2,3.1,12.7,11,12.7c4.5,0,9.6-1.2,12.6-2.3c0.1-0.1,0.2-0.2,0.2-0.3v-24.8C163.2,108.9,163,108.7,162.8,108.7z"/>
+								              <path fill="#EF3E58" d="M27.2,108.8h-6.5c-0.2,0-0.3,0.1-0.3,0.3c-1,4-3.1,10.8-5.9,17.9L8,109c-0.1-0.1-0.2-0.2-0.3-0.2H1.1c-0.1,0-0.2,0.1-0.3,0.2c-0.1,0.1-0.1,0.2,0,0.3l9.8,26.8c-1,2.1-1.9,3.8-2.8,5.4c-0.7,1.2-1.3,2.4-1.9,3.7c-0.1,0.1-0.1,0.2,0,0.3c0.1,0.1,0.2,0.2,0.3,0.2h7.1c0.1,0,0.3-0.1,0.3-0.2c1.2-2.3,2.7-5.5,4.1-8.8c4.2-9.8,7.5-19,10-27.4c0-0.1,0-0.2-0.1-0.3C27.4,108.8,27.3,108.8,27.2,108.8z"/>
+								              <path fill="#EF3E58" d="M50.5,129.4c0-0.1-0.1-0.2-0.2-0.2c-0.1,0-0.2,0-0.3,0c-1.6,0.6-4.5,1-6.5,1c-4.5,0-6.6-1.2-6.6-8c0-5.5,0.7-8,6.6-8c1.7,0,3.2,0.2,5.2,0.8c0.2,0,0.3,0,0.4-0.2c0.7-1.4,1.6-3.1,2.6-5.2c0-0.1,0-0.2,0-0.3c0-0.1-0.1-0.2-0.2-0.2c-2.6-0.8-5.7-1.3-8.5-1.3c-9.3,0-13.5,4.4-13.5,14.3c0,10,4.2,14.5,13.5,14.5c2.3,0,7-0.5,9.2-1.4c0.2-0.1,0.3-0.3,0.2-0.5L50.5,129.4z"/>
+								              <path fill="#EF3E58" d="M111.4,108.8h-6.5c-0.2,0-0.3,0.1-0.3,0.3c-1,4.1-3.1,10.8-5.9,17.9L92.2,109c-0.1-0.1-0.2-0.2-0.3-0.2h-6.6c-0.1,0-0.2,0.1-0.3,0.2c-0.1,0.1-0.1,0.2,0,0.3l9.8,26.8c-1,2.1-1.9,3.8-2.8,5.4c-0.7,1.2-1.3,2.4-1.9,3.7c-0.1,0.1-0.1,0.2,0,0.3c0.1,0.1,0.2,0.2,0.3,0.2h7.1c0.1,0,0.3-0.1,0.3-0.2c1.2-2.3,2.7-5.5,4.1-8.8c4.1-9.8,7.5-19,10-27.4c0-0.1,0-0.2-0.1-0.3C111.6,108.8,111.5,108.8,111.4,108.8z"/>
+								              <path fill="#EF3E58" d="M135.4,108.7h-18.9c-0.2,0-0.4,0.2-0.4,0.4v26.3c0,0.2,0.2,0.4,0.4,0.4h6.4c0.2,0,0.4-0.2,0.4-0.4V115h9.9c0.1,0,0.3-0.1,0.3-0.2c0.8-1.8,1.5-3.7,2.3-5.6c0-0.1,0-0.2,0-0.3C135.6,108.8,135.5,108.7,135.4,108.7z"/>
+								              <path fill="#0F67B1" d="M34.8,68.3c-9.2,0-12.8,4-12.8,14.1c0,10.3,3.6,14.3,12.8,14.3c9.3,0,12.9-4,12.9-14.3C47.7,72.3,44.1,68.3,34.8,68.3z M34.8,90.9c-4.2,0-5.5-1.1-5.5-8.3c0-7.6,1.4-8.3,5.5-8.3c4.2,0,5.6,0.7,5.6,8.3C40.4,89.7,39.1,90.9,34.8,90.9z"/>
+								              <path fill="#0F67B1" d="M73.3,89.8c0-0.1-0.1-0.2-0.2-0.2c-0.1,0-0.2,0-0.3,0c-1.6,0.6-4.5,1-6.5,1c-4.5,0-6.6-1.2-6.6-8c0-5.5,0.6-8,6.6-8c1.7,0,3.2,0.2,5.2,0.8c0.2,0,0.3,0,0.4-0.2c0.7-1.4,1.6-3.1,2.6-5.2c0-0.1,0-0.2,0-0.3c0-0.1-0.1-0.2-0.2-0.2c-2.6-0.8-5.7-1.3-8.5-1.3c-9.3,0-13.5,4.4-13.5,14.3c0,10,4.2,14.5,13.5,14.5c2.3,0,7-0.5,9.2-1.4c0.2-0.1,0.3-0.3,0.2-0.5L73.3,89.8z"/>
+								              <path fill="#0F67B1" d="M1.1,69.1c-0.2,0-0.4,0.2-0.4,0.4v26.3c0,0.2,0.2,0.4,0.4,0.4h6.4c0.2,0,0.4-0.2,0.4-0.4V75.4h9.9c0.1,0,0.3-0.1,0.3-0.2c0.8-1.8,1.5-3.7,2.3-5.6c0-0.1,0-0.2,0-0.3c-0.1-0.1-0.2-0.2-0.3-0.2H1.1z"/>
+								              <linearGradient id="gsLoaderGrad" gradientUnits="userSpaceOnUse" x1="100.5167" y1="213.0138" x2="100.5167" y2="0.9307" gradientTransform="matrix(1 0 0 -1 0 213.8898)">
+								                <stop offset="0.3979" style="stop-color:#1466AC"/>
+								                <stop offset="0.6586" style="stop-color:#EF4058"/>
+								              </linearGradient>
+								              <path fill-rule="evenodd" clip-rule="evenodd" fill="url(#gsLoaderGrad)" d="M192.7,133c0-0.1,0-0.3,0-0.4c0-0.2,0-0.5,0.1-0.7c0.3-3.7,0.5-8.2,0.7-13.4c0-0.1,0-0.3,0-0.4c0.1-3.5,0.2-7.3,0.2-11.2c0-3.9-0.1-7.7-0.2-11.2c0-0.1,0-0.3,0-0.4c-0.2-5.1-0.4-9.7-0.7-13.4c0-0.2,0-0.5-0.1-0.7c0-0.1,0-0.3,0-0.4c0-0.4-0.1-0.7-0.1-1.1c0-0.2,0-0.3,0-0.4c-0.3-3.9-0.5-6.3-0.6-6.5c0-0.4-0.1-0.8-0.1-1.1c0-0.1,0-0.2,0-0.3c-0.1-0.7-0.2-1.3-0.4-2c0-0.1,0-0.2-0.1-0.3c-1.7-8.1-6.2-17-11.8-23.7c-2.2-2.6-4.5-4.9-6.9-6.7c-0.2-0.2-3-2.2-7.4-5.3c-5.1-3.5-12.4-8.4-20.7-13.2c-14.7-8.7-27.9-14.7-29.6-15.5c0,0,0,0,0,0c0,0,0,0,0,0c-0.1,0-0.1-0.1-0.1-0.1l0,0c0,0,0,0,0,0c-3.9-1.7-8.6-2.9-13.7-3.4c-1-0.1-2-0.2-3-0.2c-0.9,0-1.8-0.1-2.7-0.1c-0.5,0-0.9,0-1.4,0C87.2,1,80.9,2.3,75.9,4.6c0,0,0,0,0,0C75.1,4.9,61.8,11,46.7,19.8h0c-0.2,0.1-0.4,0.2-0.6,0.3C30.7,29.3,18.5,38.3,18,38.7c-3.8,2.8-7.2,6.4-10.3,11C7,50.8,7,53.4,10,53.4h7.7c3.3,0,4.1-2,7.8-4.7c4.1-3,12.2-9,27-17.8C63.2,24.6,73.2,19.7,78,17.4c0,0,0,0,0,0c0.1,0,0.2-0.1,0.3-0.1c0,0,0.1,0,0.1-0.1c0,0,0.1,0,0.1-0.1c0.1,0,0.2-0.1,0.2-0.1c0,0,0,0,0,0c0.1,0,0.2-0.1,0.3-0.1c0,0,0,0,0,0c1.2-0.6,2-0.9,2-0.9c3.4-1.5,8.2-2.5,13.3-2.6c0.3,0,0.7,0,1,0c0.3,0,0.7,0,1,0c1.5,0,3,0.1,4.4,0.3c3.1,0.4,5.9,1,8.2,2c0.2,0.1,0.5,0.2,0.7,0.3c0,0,0.1,0.1,0.4,0.2c2.3,1,14.7,6.9,28.2,14.8c8,4.7,15.1,9.4,20,12.8c4.3,3,6.9,4.9,7,5c1.9,1.4,3.8,3.4,5.6,5.6c4.5,5.8,8.2,13.7,8.8,19.8c0,0.1,0.3,2.5,0.6,6.6c0,0.3,0,0.5,0.1,0.8c0,0.2,0,0.4,0,0.6c0,0.4,0.1,0.7,0.1,1.1c0,0.1,0,0.3,0,0.4c0,0.2,0,0.5,0.1,0.7c0,0.5,0.1,1,0.1,1.5c0,0.3,0,0.6,0.1,0.9c0,0.1,0,0.2,0,0.2c0,0.4,0,0.7,0.1,1.1c0,0.3,0,0.5,0,0.8c0.3,5.2,0.5,11.4,0.5,17.9s-0.2,12.7-0.5,17.9c0,0.3,0,0.5,0,0.8c0,0.4,0,0.7-0.1,1.1c0,0.1,0,0.2,0,0.2c0,0.3,0,0.6-0.1,0.9c0,0.5-0.1,1-0.1,1.5c0,0.3,0,0.5-0.1,0.7c0,0.1,0,0.3,0,0.4c0,0.4-0.1,0.7-0.1,1.1c0,0.2,0,0.4,0,0.6c0,0.3,0,0.6-0.1,0.8c-0.3,4.1-0.6,6.6-0.6,6.6c-0.6,6.1-4.3,14-8.8,19.8c-1.8,2.3-3.7,4.2-5.6,5.6c-0.1,0-2.7,2-7,5c-4.9,3.4-12.1,8.1-20,12.8c-13.5,8-26,13.8-28.2,14.8c-0.2,0.1-0.4,0.2-0.4,0.2c-0.2,0.1-0.5,0.2-0.7,0.3c-2.3,0.9-5.1,1.6-8.2,2c-1.4,0.2-2.9,0.3-4.4,0.3c-0.3,0-0.7,0-1,0s-0.7,0-1,0c-5.1-0.1-9.9-1-13.3-2.6c0,0-0.7-0.3-2-0.9c0,0,0,0,0,0c-0.1-0.1-0.3-0.1-0.4-0.2c0,0,0,0,0,0c-0.1-0.1-0.2-0.1-0.3-0.2c-0.1,0-0.1-0.1-0.2-0.1c-0.1,0-0.2-0.1-0.3-0.1c-0.1-0.1-0.2-0.1-0.4-0.2c0,0-0.1,0-0.1,0c-5.1-2.4-14.7-7.2-24.9-13.2c-14.9-8.7-22.9-14.8-27-17.8c-3.7-2.7-4.5-4.7-7.8-4.7H10c-3,0-3,2.6-2.3,3.6c3.1,4.6,6.5,8.2,10.3,11c0.5,0.4,12.7,9.4,28.1,18.5c0.8,0.5,1.6,1,2.5,1.4h0c14.3,8.2,26.6,13.8,27.3,14.2c0,0,0,0,0,0c4.9,2.2,11.3,3.5,18.1,3.7c0.4,0,0.9,0,1.4,0c0.9,0,1.8,0,2.7-0.1c1,0,2-0.1,3-0.2c5.1-0.5,9.9-1.7,13.7-3.4c0,0,0,0,0,0l0,0c0,0,0.1,0,0.1-0.1c0,0,0,0,0,0c0,0,0,0,0,0c1.7-0.8,14.9-6.9,29.6-15.5c8.3-4.9,15.6-9.7,20.7-13.2c4.4-3.1,7.2-5.1,7.4-5.3c2.4-1.8,4.7-4.1,6.9-6.7c5.6-6.7,10.1-15.6,11.8-23.7c0-0.1,0-0.2,0.1-0.3c0.1-0.7,0.3-1.4,0.4-2c0-0.1,0-0.2,0-0.3c0.1-0.4,0.1-0.8,0.1-1.1c0-0.2,0.3-2.6,0.6-6.5c0-0.1,0-0.3,0-0.4C192.7,133.7,192.7,133.3,192.7,133"/>
+								              <path fill="#EF3E58" d="M79.9,108.7H60.3c-0.2,0-0.3,0.1-0.4,0.3c-0.5,8.9-2.2,18.4-4.6,26.2c0,0.1,0,0.2,0.1,0.3c0.1,0.1,0.2,0.1,0.3,0.1h6.7c0.2,0,0.3-0.1,0.3-0.2c1.9-6,3.4-13.8,4-20.4h6.4v20.3c0,0.2,0.2,0.4,0.4,0.4h6.4c0.2,0,0.4-0.2,0.4-0.4v-26.3C80.3,108.9,80.1,108.7,79.9,108.7z"/>
+								            </g>
+								          </g>
+								        </g>
+								      </svg>
+							</span>
+						</span>
+					</div>
+					<div class="gs-scene" aria-hidden="true">
+					<div class="gs-site" aria-hidden="true">
+						<img class="gs-bg" src="assets/img/gosparts/bg1.png" alt="" loading="lazy" decoding="async">
+						<img class="gs-bg" src="assets/img/gosparts/bg2.png" alt="" loading="lazy" decoding="async">
+						<img class="gs-bg" src="assets/img/gosparts/bg3.png" alt="" loading="lazy" decoding="async">
+					</div>
+					<div class="gs-skel" aria-hidden="true">
+					<span class="gs-skel-box" style="left:0.0000%;top:0.0000%;width:100.0000%;height:4.5238%"></span>
+					<span class="gs-skel-box" style="left:26.2626%;top:5.6548%;width:11.6162%;height:5.9524%"></span>
+					<span class="gs-skel-box" style="left:37.8788%;top:5.6548%;width:11.4478%;height:5.9524%"></span>
+					<span class="gs-skel-box" style="left:49.3266%;top:5.6548%;width:11.2795%;height:5.9524%"></span>
+					<span class="gs-skel-box" style="left:60.6061%;top:5.6548%;width:12.1212%;height:5.9524%"></span>
+					<span class="gs-skel-box" style="left:26.4310%;top:8.6310%;width:4.8822%;height:17.5595%"></span>
+					<span class="gs-skel-box" style="left:34.0067%;top:14.8810%;width:31.9865%;height:3.6905%"></span>
+					<span class="gs-skel-box" style="left:34.0067%;top:19.1667%;width:31.9865%;height:4.1667%"></span>
+					<span class="gs-skel-box" style="left:34.0067%;top:22.0238%;width:25.4209%;height:4.8810%"></span>
+					<span class="gs-skel-box" style="left:25.9259%;top:34.2262%;width:11.2795%;height:2.9762%"></span>
+					<span class="gs-skel-box" style="left:70.9764%;top:34.2262%;width:3.0976%;height:2.5000%"></span>
+					<span class="gs-skel-box" style="left:25.9259%;top:38.6905%;width:7.4074%;height:14.5833%"></span>
+					<span class="gs-skel-box" style="left:34.1077%;top:38.6905%;width:7.3064%;height:14.5833%"></span>
+					<span class="gs-skel-box" style="left:42.2559%;top:38.6905%;width:7.3064%;height:14.5833%"></span>
+					<span class="gs-skel-box" style="left:50.4377%;top:38.6905%;width:7.3064%;height:14.5833%"></span>
+					<span class="gs-skel-box" style="left:58.6195%;top:38.6905%;width:7.3064%;height:14.5833%"></span>
+					<span class="gs-skel-box" style="left:66.8013%;top:38.6905%;width:7.3064%;height:14.5833%"></span>
+					<span class="gs-skel-box" style="left:25.9259%;top:62.0238%;width:11.4478%;height:2.9762%"></span>
+					<span class="gs-skel-box" style="left:67.5084%;top:62.5000%;width:6.5657%;height:1.9048%"></span>
+					<span class="gs-skel-box" style="left:25.9259%;top:66.3690%;width:23.6364%;height:13.9881%"></span>
+					<span class="gs-skel-box" style="left:50.3367%;top:66.3690%;width:11.6162%;height:13.9881%"></span>
+					<span class="gs-skel-box" style="left:62.6263%;top:66.3690%;width:11.6162%;height:13.9881%"></span>
+					<span class="gs-skel-box" style="left:25.9259%;top:81.0714%;width:11.4478%;height:15.6548%"></span>
+					<span class="gs-skel-box" style="left:38.0471%;top:81.0714%;width:11.6162%;height:15.6548%"></span>
+					<span class="gs-skel-box" style="left:50.3367%;top:81.0714%;width:11.6162%;height:15.6548%"></span>
+					<span class="gs-skel-box" style="left:62.6263%;top:81.0714%;width:11.6162%;height:15.6548%"></span>
+					</div>
+					<div class="gs-parts" aria-hidden="true">
+						<span class="gs-part" style="left:0.0000%;top:0.0000%;width:100.0000%;height:4.7619%;--i:0;--tx:0.0;--ty:-59.3"><img src="assets/img/gosparts/parts/01.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:26.2626%;top:5.6548%;width:11.7508%;height:6.1905%;--i:1;--tx:-39.3;--ty:-51.3"><img src="assets/img/gosparts/parts/02.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:37.8788%;top:5.6548%;width:11.5825%;height:6.1905%;--i:2;--tx:-13.9;--ty:-51.3"><img src="assets/img/gosparts/parts/03.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:49.3266%;top:5.6548%;width:11.4141%;height:6.1905%;--i:3;--tx:11.1;--ty:-51.3"><img src="assets/img/gosparts/parts/04.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:60.6061%;top:5.6548%;width:12.2559%;height:6.1905%;--i:4;--tx:36.8;--ty:-51.3"><img src="assets/img/gosparts/parts/05.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:26.4310%;top:8.6310%;width:5.0168%;height:17.7976%;--i:5;--tx:-46.3;--ty:-40.4"><img src="assets/img/gosparts/parts/06.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:34.0067%;top:14.8810%;width:32.1212%;height:3.9286%;--i:6;--tx:0.1;--ty:-41.3"><img src="assets/img/gosparts/parts/07.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:34.0067%;top:19.1667%;width:32.1212%;height:4.4048%;--i:7;--tx:0.1;--ty:-35.6"><img src="assets/img/gosparts/parts/08.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:34.0067%;top:22.0238%;width:25.5556%;height:5.1190%;--i:8;--tx:-7.1;--ty:-31.6"><img src="assets/img/gosparts/parts/09.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:25.9259%;top:34.2262%;width:11.4141%;height:3.2143%;--i:9;--tx:-40.4;--ty:-17.6"><img src="assets/img/gosparts/parts/10.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:70.9764%;top:34.2262%;width:3.2323%;height:2.7381%;--i:10;--tx:49.7;--ty:-17.9"><img src="assets/img/gosparts/parts/11.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:25.9259%;top:38.6905%;width:7.5421%;height:14.8214%;--i:11;--tx:-44.7;--ty:-4.9"><img src="assets/img/gosparts/parts/12.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:34.1077%;top:38.6905%;width:7.4411%;height:14.8214%;--i:12;--tx:-26.8;--ty:-4.9"><img src="assets/img/gosparts/parts/13.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:42.2559%;top:38.6905%;width:7.4411%;height:14.8214%;--i:13;--tx:-8.9;--ty:-4.9"><img src="assets/img/gosparts/parts/14.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:50.4377%;top:38.6905%;width:7.4411%;height:14.8214%;--i:14;--tx:9.1;--ty:-4.9"><img src="assets/img/gosparts/parts/15.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:58.6195%;top:38.6905%;width:7.4411%;height:14.8214%;--i:15;--tx:27.1;--ty:-4.9"><img src="assets/img/gosparts/parts/16.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:66.8013%;top:38.6905%;width:7.4411%;height:14.8214%;--i:16;--tx:45.1;--ty:-4.9"><img src="assets/img/gosparts/parts/17.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:25.9259%;top:62.0238%;width:11.5825%;height:3.2143%;--i:17;--tx:-40.2;--ty:17.0"><img src="assets/img/gosparts/parts/18.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:67.5084%;top:62.5000%;width:6.7003%;height:2.1429%;--i:18;--tx:45.9;--ty:16.9"><img src="assets/img/gosparts/parts/19.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:25.9259%;top:66.3690%;width:23.7710%;height:14.2262%;--i:19;--tx:-26.8;--ty:29.2"><img src="assets/img/gosparts/parts/20.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:50.3367%;top:66.3690%;width:11.7508%;height:14.2262%;--i:20;--tx:13.7;--ty:29.2"><img src="assets/img/gosparts/parts/21.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:62.6263%;top:66.3690%;width:11.7508%;height:14.2262%;--i:21;--tx:40.7;--ty:29.2"><img src="assets/img/gosparts/parts/22.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:25.9259%;top:81.0714%;width:11.5825%;height:15.8929%;--i:22;--tx:-40.2;--ty:48.6"><img src="assets/img/gosparts/parts/23.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:38.0471%;top:81.0714%;width:11.7508%;height:15.8929%;--i:23;--tx:-13.4;--ty:48.6"><img src="assets/img/gosparts/parts/24.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:50.3367%;top:81.0714%;width:11.7508%;height:15.8929%;--i:24;--tx:13.7;--ty:48.6"><img src="assets/img/gosparts/parts/25.png" alt="" loading="lazy" decoding="async"></span>
+						<span class="gs-part" style="left:62.6263%;top:81.0714%;width:11.7508%;height:15.8929%;--i:25;--tx:40.7;--ty:48.6"><img src="assets/img/gosparts/parts/26.png" alt="" loading="lazy" decoding="async"></span>
+					</div>
+					</div>
+				</div>
+				<img class="gs-monitor-bezel" src="assets/img/applemonitor-bezel.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+				<span class="gs-stand-medallion" aria-hidden="true"></span>
+			</div>
+		</div>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+	</section>
+
+	<section class="panel" id="sfera" style="--bg:#531bfc" aria-labelledby="t02">
+		<span class="panel-bg" aria-hidden="true">
+			<video class="panel-video" poster="assets/img/bg/02.webp" muted playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/sfera-panel.webm" type="video/webm">
+			</video>
+		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo panel-logo--color"><img src="assets/logos/sfera-white.svg" alt="Сфера" style="height:154px" loading="lazy" decoding="async"></span>
@@ -58,24 +188,34 @@
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel" id="p03" style="--bg:#1a1a1a" aria-labelledby="t03">
+	<section class="panel panel--butik" id="butik" style="--bg:#1a1a1a; --g1:#1a1a1a" aria-labelledby="t03">
 		<span class="panel-bg" aria-hidden="true"></span>
+		<img class="butik-mark" src="assets/logos/butik.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">
 		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo"><img src="assets/logos/butik.webp" alt="Butik" style="height:35px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t03">Фиджитал‑универмаг и&nbsp;экосистема цифровых продуктов</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
+			<div class="butik-content">
+				<div class="panel-text">
+					<h2 class="panel-title" id="t03">Фиджитал-универмаг<br>и&nbsp;экосистема цифровых продуктов</h2>
+					<p class="panel-role-label">Роль</p>
+					<p class="panel-role">Руководитель направления дизайна</p>
+				</div>
+				<div class="butik-media">
+					<img class="butik-media-frame" src="assets/img/butik-tv.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+					<video class="butik-media-video" src="assets/video/butik.webm?v=2" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+				</div>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel" id="p04" style="--bg:linear-gradient(135deg,#3E34A8 0%,#0A0070 100%)" aria-labelledby="t04">
-		<span class="panel-bg" aria-hidden="true"></span>
+	<section class="panel" id="expertme" style="--bg:#211D85; --g1:#211D85" aria-labelledby="t04">
+		<span class="panel-bg" aria-hidden="true">
+			<video class="panel-video" poster="assets/video/expertme-poster.webp?v=2" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/expertme-panel.webm?v=3" type="video/webm">
+			</video>
+		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo panel-logo--color"><img src="assets/logos/expertme-wordmark-white.png" alt="ExpertMe" style="height:48px" loading="lazy" decoding="async"></span>
@@ -84,105 +224,62 @@
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel" id="p05" style="--bg:linear-gradient(135deg,#3E34A8 0%,#0A0070 100%)" aria-labelledby="t05">
-		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo panel-logo--color"><img src="assets/logos/expertme-wordmark-white.png" alt="ExpertMe" style="height:48px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t05">Сайт, фирменный стиль, инфографика и&nbsp;иллюстрации для&nbsp;компании ExpertMe</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель группы продуктового дизайна</p>
-			</div>
-		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
-	</section>
-
-	<section class="panel" id="p06" style="--bg:linear-gradient(135deg,#3E34A8 0%,#0A0070 100%)" aria-labelledby="t06">
-		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo panel-logo--text" style="font-size:25px">E–Assessment</span>
-				<h2 class="panel-title" id="t06">Платформа для&nbsp;комплексного управления квалификацией персонала. Профессиональное решение по&nbsp;цифровизации процессов управления талантами в&nbsp;масштабе крупнейших организаций</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель группы продуктового дизайна</p>
-			</div>
-		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
-	</section>
-
-	<section class="panel" id="p07" style="--bg:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.62)), url('../img/bg/07.webp') center / cover no-repeat; --g1:#b2b1a5" aria-labelledby="t07">
+	<section class="panel" id="rosatom" style="--bg:url('../img/bg/videowall.webp?v=4') center / cover no-repeat; --g1:#1a1a1a" aria-labelledby="t07">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo"><img src="assets/logos/rosatom.svg" alt="Росэнергоатом" style="height:96px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t07">Видеостена системы объективного контроля процессов и&nbsp;мониторинга параметров для&nbsp;Центрального диспетчерского щита в&nbsp;кризисном центре</h2>
+				<h2 class="panel-title" id="t07">Система объективного<br>контроля процессов<br>и&nbsp;мониторинга параметров<br>для&nbsp;Центрального<br>диспетчерского щита<br>в&nbsp;кризисном центре</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Ведущий продуктовый дизайнер</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel panel--light" id="p08" style="--bg:#F0F5F9" aria-labelledby="t08">
-		<span class="panel-bg" aria-hidden="true"></span>
+	<section class="panel panel--light" id="myexport" style="--bg:#FFFFFF" aria-labelledby="t06">
+		<span class="panel-bg" aria-hidden="true">
+			<video class="panel-video" poster="assets/video/myexport-poster.webp?v=2" muted playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/myexport-panel.webm?v=2" type="video/webm">
+			</video>
+		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
-				<span class="panel-logo panel-logo--pair">
-					<img src="assets/logos/myexport-logo-color.png" alt="Госуслуги ВЭД" style="width:50%;height:auto" loading="lazy" decoding="async">
-					<img src="assets/logos/myexport-new.svg" alt="Мой Экспорт" style="height:67.2px;transform:translateY(-4px)" loading="lazy" decoding="async">
-				</span>
-				<h2 class="panel-title" id="t08">Государственная цифровая платформа Мой Экспорт «Одно окно», созданная для&nbsp;предоставления российским компаниям онлайн‑доступа к&nbsp;государственным и&nbsp;бизнес‑услугам для&nbsp;поддержки и&nbsp;развития продаж за&nbsp;рубеж</h2>
+				<span class="panel-logo"><img src="assets/logos/myexport.svg" alt="Мой экспорт" style="height:107px" loading="lazy" decoding="async"></span>
+				<h2 class="panel-title" id="t06">Единый государственный<br>онлайн-портал для&nbsp;бизнеса,<br>помогающий российским<br>компаниям продавать товары<br>и&nbsp;услуги за&nbsp;рубеж</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel" id="p09" style="--bg:linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.42)), url('../img/bg/08.webp') center / cover no-repeat" aria-labelledby="t09">
-		<span class="panel-bg" aria-hidden="true"></span>
+	<section class="panel" id="inexpay" style="--bg:#1A1A1A" aria-labelledby="t05">
+		<span class="panel-bg" aria-hidden="true">
+			<video class="panel-video" poster="assets/video/inexpay-poster.webp" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/inexpay-panel.webm" type="video/webm">
+			</video>
+		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
-				<span class="panel-logo"><img src="assets/logos/corespirit.svg" alt="CoreSpirit" style="height:64px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t09">Международная онлайн‑платформа и&nbsp;бизнес‑экосистема, объединяющая специалистов традиционной медицины, альтернативных практик и&nbsp;личностного роста с&nbsp;клиентами по&nbsp;всему миру</h2>
+				<span class="panel-logo panel-logo--color"><img src="assets/logos/inexpay-pay-white.png" alt="InexPay" style="height:48px" loading="lazy" decoding="async"></span>
+				<h2 class="panel-title" id="t05">Мобильное приложение — финтех-платформа с&nbsp;интуитивным интерфейсом для&nbsp;международных переводов, быстрой и&nbsp;безопасной отправки денег по&nbsp;всему миру</h2>
 				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
+				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel panel--light" id="p10" style="--bg:linear-gradient(135deg,#FFFFFF 0%,#C6C9CC 100%)" aria-labelledby="t10">
-		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo"><img src="assets/logos/binarymanagement.svg" alt="Binary Management" style="height:134.4px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t10">Специализированная облачная платформа и&nbsp;ИТ‑решение для&nbsp;управления проектами в&nbsp;сфере архитектуры и&nbsp;дизайна интерьеров</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
-			</div>
-		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
-	</section>
-
-	<section class="panel" id="p11" style="--bg:#3e0066 url('../img/ecommpay-bg.svg') center / contain no-repeat; --g1:#3e0066" aria-labelledby="t11">
-		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo"><img src="assets/logos/ecommpay.svg" alt="EcommPay" style="height:42.56px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t11">Комплексные решения для&nbsp;приема онлайн‑платежей и&nbsp;осуществления выплат по&nbsp;всему миру</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
-			</div>
-		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
-	</section>
-
-	<section class="panel panel--light" id="p12" style="--bg:url('../img/bg/11.webp') right top / calc(100% + 44px) auto no-repeat; --g1:#e8edf1" aria-labelledby="t12">
-		<span class="panel-bg" aria-hidden="true"></span>
+	<section class="panel panel--light" id="skillstech" style="--bg:#e8edf1; --g1:#e8edf1" aria-labelledby="t12">
+		<span class="panel-bg" aria-hidden="true">
+			<video class="panel-video" poster="assets/video/skillstech-poster.webp" muted playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/skillstech-panel.webm" type="video/webm">
+			</video>
+		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo"><img src="assets/logos/st-dark.svg" alt="СкиллсТек" style="height:48px" loading="lazy" decoding="async"></span>
@@ -191,86 +288,126 @@
 				<p class="panel-role">Руководитель направления дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel" id="p13" style="--bg:linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.42)), url('../img/bg/12.webp') center / cover no-repeat" aria-labelledby="t13">
-		<span class="panel-bg" aria-hidden="true"></span>
+	<section class="panel panel--light" id="bm" style="--bg:#CECECE" aria-labelledby="t10">
+		<span class="panel-bg" aria-hidden="true">
+			<video class="panel-video" poster="assets/video/bm-poster.webp" muted playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/bm-panel.webm" type="video/webm">
+			</video>
+		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
-				<span class="panel-logo panel-logo--color"><img src="assets/logos/getmark.svg" alt="Get Mark" style="height:64px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t13">Цифровые продукты для&nbsp;российской B2B‑платформы и&nbsp;облачного SaaS‑сервиса, созданного для&nbsp;автоматизации процессов обязательной маркировки товаров и&nbsp;их складского учета</h2>
+				<span class="panel-logo"><img src="assets/logos/binarymanagement.svg" alt="Binary Management" style="height:134.4px" loading="lazy" decoding="async"></span>
+				<h2 class="panel-title" id="t10">Специализированная облачная платформа и&nbsp;ИТ‑решение для&nbsp;управления проектами в&nbsp;сфере архитектуры и&nbsp;дизайна интерьеров</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Руководитель направления дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
 	</section>
 
-	<section class="panel" id="p14" style="--bg:linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.42)), url('../img/bg/14.webp') calc(100% + 164px) center / cover no-repeat" aria-labelledby="t14">
+	<section class="panel panel--nda" id="nda" style="--bg:#1A1A1A; --g1:#1A1A1A" aria-labelledby="t17">
 		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo panel-logo--color"><img src="assets/logos/tobox.svg" alt="ToBox" style="height:128px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t14">Экосистема цифровых продуктов Международной e‑commerce компании с&nbsp;китайским капиталом, универсальный маркетплейс и&nbsp;торговая онлайн‑площадка</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
+		<div class="nda-head">
+			<h2 class="panel-link" id="t17">NDA и&nbsp;Архив</h2>
+		</div>
+		<div class="nda-viewport" aria-hidden="true">
+			<div class="nda-track" id="ndaTrack">
+				<div class="nda-block">
+					<span class="nda-card nda-card--wide"></span>
+					<span class="nda-card nda-card--sky"></span>
+					<span class="nda-card nda-card--mist"></span>
+					<span class="nda-card nda-card--wide nda-card--sage"></span>
+					<span class="nda-card nda-card--wide"></span>
+					<span class="nda-card nda-card--azure"></span>
+				</div>
+				<div class="nda-block">
+					<span class="nda-card nda-card--wide nda-card--mist"></span>
+					<span class="nda-card nda-card--azure"></span>
+					<span class="nda-card nda-card--wide"></span>
+					<span class="nda-card nda-card--sky"></span>
+					<span class="nda-card nda-card--navy"></span>
+					<span class="nda-card nda-card--wide"></span>
+				</div>
+				<div class="nda-block">
+					<span class="nda-card"></span>
+					<span class="nda-card nda-card--wide nda-card--sky"></span>
+					<span class="nda-card nda-card--wide"></span>
+					<span class="nda-card nda-card--violet"></span>
+					<span class="nda-card nda-card--ink"></span>
+					<span class="nda-card nda-card--wide nda-card--azure"></span>
+				</div>
+				<div class="nda-block">
+					<span class="nda-card nda-card--sage"></span>
+					<span class="nda-card nda-card--wide"></span>
+					<span class="nda-card nda-card--navy"></span>
+					<span class="nda-card nda-card--wide nda-card--mist"></span>
+					<span class="nda-card nda-card--wide"></span>
+					<span class="nda-card nda-card--sky"></span>
+				</div>
 			</div>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
-	</section>
-
-	<section class="panel" id="p15" style="--bg:linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.42)), url('../img/bg/ilim.webp') center / cover no-repeat" aria-labelledby="t15">
-		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo panel-logo--color"><img src="assets/logos/ilim-clean.png" alt="Илим" style="height:128px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t15">Интеллектуальная система оценки и&nbsp;учета текущих земельных участков и&nbsp;поиска новых земельных участков лесозаготовок для&nbsp;лидера целлюлозно‑бумажной промышленности России</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
-			</div>
+		<div class="nda-scroll" aria-hidden="true">
+			<span class="nda-thumb"></span>
 		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
-	</section>
-
-	<section class="panel" id="p16" style="--bg:linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.42)), url('../img/bg/13.webp') center / cover no-repeat" aria-labelledby="t16">
-		<span class="panel-bg" aria-hidden="true"></span>
-		<div class="panel-inner">
-			<div class="panel-text">
-				<span class="panel-logo panel-logo--color"><img src="assets/logos/harcord.svg" alt="Hardcord" style="height:128px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t16">Специализированный международный маркетплейс и&nbsp;социальная сеть для&nbsp;бойцов смешанных единоборств (ММА), бокса и&nbsp;других дисциплин</h2>
-				<p class="panel-role-label">Роль</p>
-				<p class="panel-role">Руководитель направления дизайна</p>
-			</div>
-		</div>
-		<a class="panel-btn" href="#">Смотреть проект</a>
 	</section>
 
 </main>
 
+			<footer class="sfooter">
+		<div class="sfooter-inner">
+			<div class="sfooter-top">
+				<div class="sfooter-brand">
+					<a class="sfooter-name" href="index.html">Антон Миньков</a>
+					<p class="sfooter-role">Руководитель группы продуктового дизайна</p>
+				</div>
+				<nav class="sfooter-nav" aria-label="Разделы сайта">
+					<ul>
+						<li><a href="design.html" aria-current="page">Дизайн</a></li>
+						<li><a href="management.html">Менеджмент</a></li>
+						<li><a href="kontakty.html">Контакты</a></li>
+						<li><a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a></li>
+					</ul>
+				</nav>
+				<div class="sfooter-contact">
+					<ul>
+						<li><a href="mailto:minkov.work@gmail.com">minkov.work@gmail.com</a></li>
+						<li><a href="https://t.me/tony_newton" target="_blank" rel="noopener">Telegram — @tony_newton</a></li>
+					</ul>
+					<span class="sfooter-qr">
+						<img src="assets/img/telegram-qr.svg" alt="" width="112" height="112" loading="lazy" decoding="async">
+					</span>
+				</div>
+			</div>
+			<div class="sfooter-bottom">
+				<p class="sfooter-copy">© <span class="sfooter-year">2026</span> Антон Миньков</p>
+				<p class="sfooter-tagline">Решаю задачи бизнеса через эффективный пользовательский опыт</p>
+			</div>
+		</div>
+	</footer>
+
+
 <nav class="dots" id="dots" aria-label="Навигация по проектам">
-	<a class="dot" href="#p01" aria-label="Госуслуги"></a>
-	<a class="dot" href="#p02" aria-label="Сфера"></a>
-	<a class="dot" href="#p03" aria-label="Butik"></a>
-	<a class="dot" href="#p04" aria-label="ExpertMe — платформа"></a>
-	<a class="dot" href="#p05" aria-label="ExpertMe — сайт"></a>
-	<a class="dot" href="#p06" aria-label="E–Assessment"></a>
-	<a class="dot" href="#p07" aria-label="Росэнергоатом"></a>
-	<a class="dot" href="#p08" aria-label="Мой Экспорт"></a>
-	<a class="dot" href="#p09" aria-label="CoreSpirit"></a>
-	<a class="dot" href="#p10" aria-label="Binary Management"></a>
-	<a class="dot" href="#p11" aria-label="EcommPay"></a>
-	<a class="dot" href="#p12" aria-label="СкиллсТек"></a>
-	<a class="dot" href="#p13" aria-label="Get Mark"></a>
-	<a class="dot" href="#p14" aria-label="ToBox"></a>
-	<a class="dot" href="#p15" aria-label="Илим"></a>
-	<a class="dot" href="#p16" aria-label="Hardcord"></a>
+	<a class="dot" href="#intro" aria-label="Design"></a>
+	<a class="dot" href="#gosuslugi" aria-label="Госуслуги"></a>
+	<a class="dot" href="#sfera" aria-label="Сфера"></a>
+	<a class="dot" href="#butik" aria-label="Butik"></a>
+	<a class="dot" href="#expertme" aria-label="ExpertMe — платформа"></a>
+	<a class="dot" href="#rosatom" aria-label="Росэнергоатом"></a>
+	<a class="dot" href="#myexport" aria-label="E–Assessment"></a>
+	<a class="dot" href="#inexpay" aria-label="InexPay"></a>
+	<a class="dot" href="#skillstech" aria-label="СкиллсТек"></a>
+	<a class="dot" href="#bm" aria-label="Binary Management"></a>
+	<a class="dot" href="#nda" aria-label="NDA и Архив"></a>
+
 </nav>
 
 <button class="to-top" id="toTop" type="button" aria-label="Наверх">
-	<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6 15l6-6 6 6"/></svg>
+	<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
 </button>
 
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=32"></script>
 </body>
 </html>

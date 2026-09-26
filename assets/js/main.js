@@ -15,6 +15,12 @@
   const yearEl = document.querySelector('.sfooter-year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  // Expertise index hover: mirror each title's words into data-text so the CSS
+  // ramp copy can wipe in over them.
+  document.querySelectorAll('.xi-fill').forEach((el) => {
+    el.setAttribute('data-text', el.textContent);
+  });
+
   // Fit the top line width to the name width
   const heroName = document.querySelector('.hero-name');
   const heroTopline = document.querySelector('.hero-topline');
@@ -23,11 +29,35 @@
       const nameW = heroName.getBoundingClientRect().width;
       heroTopline.style.fontSize = '16px';
       const baseW = heroTopline.getBoundingClientRect().width;
-      if (nameW > 0 && baseW > 0) heroTopline.style.fontSize = (16 * nameW / baseW).toFixed(2) + 'px';
+      if (nameW > 0 && baseW > 0) {
+        // fit to the name width, but capped so enlarging the name no longer
+        // inflates this line (on narrow screens it still shrinks to fit)
+        const size = Math.min(16 * nameW / baseW, 15);
+        heroTopline.style.fontSize = size.toFixed(2) + 'px';
+      }
     };
     fitTopline();
     addEventListener('resize', fitTopline);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTopline);
+  }
+
+  // Butik (#butik): the copy column — and the CRT film below it — take the width
+  // of the title's own longest line, and the whole group is centred on the page.
+  const butikPanel = document.getElementById('butik');
+  if (butikPanel) {
+    const butikContent = butikPanel.querySelector('.butik-content');
+    const butikTitle = butikPanel.querySelector('.panel-title');
+    if (butikContent && butikTitle) {
+      const fitButik = () => {
+        butikTitle.style.width = 'max-content';
+        const w = Math.ceil(butikTitle.getBoundingClientRect().width);
+        butikTitle.style.width = '';
+        if (w > 0) butikContent.style.setProperty('--butik-col', w + 'px');
+      };
+      fitButik();
+      addEventListener('resize', fitButik);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitButik);
+    }
   }
 
   // Pause background videos for reduced motion
@@ -238,6 +268,8 @@
   if (snap) {
     const panels = Array.from(snap.querySelectorAll('.panel'));
     const dots = Array.from(document.querySelectorAll('.dots .dot'));
+    const dotsNav = document.getElementById('dots');
+    const toTopEl = document.getElementById('toTop');
     const inners = panels.map((p) => p.querySelector('.panel-inner'));
     const bgs = panels.map((p) => p.querySelector('.panel-bg'));
     const icons = panels.map((p) => p.querySelector('.panel-icon'));
@@ -256,18 +288,118 @@
     const easeInOut = (t) => t < .5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
     const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
 
+    // A panel's background clip (the Sfera one) is not looped: it plays once and
+    // replays from the first frame every time its panel becomes the active one.
+    // Loading is deferred — the source carries data-src — so it is fetched only
+    // when first needed, and reduced-motion keeps the poster instead.
+    const playPanelVideo = (v) => {
+      if (reducedMotion) return;
+      // drop any pending "replay after a beat" timer so a manual restart wins
+      clearTimeout(v._loopTimer);
+      v._loopTimer = 0;
+      if (v.dataset.loaded !== '1') {
+        const s = v.querySelector('source[data-src]');
+        if (s) { s.src = s.dataset.src; v.load(); }
+        v.dataset.loaded = '1';
+      }
+      try { v.currentTime = 0; } catch (e) { /* not seekable yet */ }
+      const pr = v.play();
+      if (pr && pr.catch) pr.catch(() => {});
+    };
+
+    // The Госуслуги monitor (#gosuslugi) runs a looping intro: copy -> loader -> bands
+    // -> skeleton -> build -> assembled screen. It holds, then the screen scrolls
+    // up and the copy scrolls back in from below, and it loops. Any interaction
+    // defers the loop by another hold; scrolling away stops it.
+    const gsPanel = document.getElementById('gosuslugi');
+    const GS_FORWARD = 9500; // ms the forward intro takes
+    const GS_HOLD = 3000;     // idle time on the finished screen before looping
+    const GS_RETURN = 1800;   // ms the scroll-back takes
+    let gsForwardTimer = 0;
+    let gsReturnTimer = 0;
+    let gsLoopActive = false;
+    let gsForwardDone = false;
+
+    const restartGsCycle = () => {
+      if (!gsPanel || reducedMotion) return;
+      gsPanel.classList.remove('is-returning');
+      gsPanel.classList.remove('is-cycling');
+      void gsPanel.offsetWidth; // reflow so the animations restart
+      gsPanel.classList.add('is-cycling');
+    };
+
+    const gsScheduleReturn = () => {
+      clearTimeout(gsReturnTimer);
+      gsReturnTimer = setTimeout(() => {
+        if (!gsLoopActive || !gsPanel.classList.contains('is-cycling')) return;
+        gsPanel.classList.add('is-returning');
+        gsForwardTimer = setTimeout(() => {
+          if (!gsLoopActive) return;
+          restartGsCycle();
+          gsForwardDone = false;
+          gsForwardTimer = setTimeout(() => { gsForwardDone = true; gsScheduleReturn(); }, GS_FORWARD);
+        }, GS_RETURN);
+      }, GS_HOLD);
+    };
+
+    const startGsLoop = () => {
+      if (!gsPanel || reducedMotion) return;
+      clearTimeout(gsForwardTimer);
+      clearTimeout(gsReturnTimer);
+      gsLoopActive = true;
+      gsForwardDone = false;
+      restartGsCycle();
+      gsForwardTimer = setTimeout(() => { gsForwardDone = true; gsScheduleReturn(); }, GS_FORWARD);
+    };
+
+    const stopGsLoop = () => {
+      gsLoopActive = false;
+      gsForwardDone = false;
+      clearTimeout(gsForwardTimer);
+      clearTimeout(gsReturnTimer);
+      if (gsPanel) gsPanel.classList.remove('is-returning');
+    };
+
+    // any interaction pushes the loop back by another full hold
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) =>
+      addEventListener(ev, () => { if (gsLoopActive && gsForwardDone) gsScheduleReturn(); }, { passive: true }));
+
+    // Dots are bound to panels by id, not by position, so panels without a dot
+    // (the intro cover) don't shift every project's target.
+    const panelIndexById = {};
+    panels.forEach((p, k) => { if (p.id) panelIndexById['#' + p.id] = k; });
+
     const setActive = (i) => {
       if (i < 0) return;
-      dots.forEach((d, k) => {
-        const on = k === i;
+      dots.forEach((d) => {
+        const on = panelIndexById[d.getAttribute('href')] === i;
         d.classList.toggle('is-active', on);
         if (on) d.setAttribute('aria-current', 'true');
         else d.removeAttribute('aria-current');
       });
-      if (navbar) {
-        const onLight = !!(panels[i] && panels[i].classList.contains('panel--light'));
-        navbar.classList.toggle('navbar--on-light', onLight);
+      const onLight = !!(panels[i] && panels[i].classList.contains('panel--light'));
+      if (navbar) navbar.classList.toggle('navbar--on-light', onLight);
+      // The BM panel (#bm) gives the fixed navbar copy a matching halo too.
+      if (navbar) navbar.classList.toggle('navbar--bm', !!(panels[i] && panels[i].id === 'bm'));
+      // The NDA bento runs white cards under the fixed right-hand chrome.
+      const isNda = !!(panels[i] && panels[i].id === 'nda');
+      if (dotsNav) dotsNav.classList.toggle('dots--on-light', onLight);
+      if (toTopEl) {
+        toTopEl.classList.toggle('to-top--on-light', onLight);
+        toTopEl.classList.toggle('to-top--nda', isNda);
+        // nothing to scroll up to on the first panel
+        toTopEl.classList.toggle('to-top--hidden', i === 0);
       }
+      // Restart the active panel's clip; park every other one so nothing runs
+      // off-screen. Re-entering the panel replays it from the top.
+      panels.forEach((p, k) => {
+        const v = p.querySelector('.panel-video');
+        if (!v) return;
+        if (k === i) playPanelVideo(v);
+        else v.pause();
+      });
+      if (panels[i] && panels[i].id === 'gosuslugi') startGsLoop();
+      else stopGsLoop();
     };
 
     let active = -1;
@@ -277,6 +409,236 @@
     let ticking = false;
     let rafId = 0;
 
+    // The closing NDA screen (#nda) is a sideways strip of four bento blocks. The
+    // wheel pans it continuously (eased, not stepped); keyboard and touch still
+    // move a block at a time. A slim scrollbar at the foot reflects the position.
+    const ndaPanel = document.getElementById('nda');
+    const ndaViewport = ndaPanel ? ndaPanel.querySelector('.nda-viewport') : null;
+    const ndaTrack = ndaPanel ? ndaPanel.querySelector('.nda-track') : null;
+    const ndaBlocks = ndaTrack ? Array.from(ndaTrack.querySelectorAll('.nda-block')) : [];
+    const ndaScroll = ndaPanel ? ndaPanel.querySelector('.nda-scroll') : null;
+    const ndaThumb = ndaScroll ? ndaScroll.querySelector('.nda-thumb') : null;
+    const NDA_EASE = 0.18;
+    // The rubber band is proportional to the viewport so the left and right
+    // stretches read the same on any screen instead of a fixed 125px.
+    const ndaPullMax = () => {
+      const vw = ndaViewport ? ndaViewport.clientWidth : 900;
+      return Math.max(80, Math.min(170, vw * 0.11));
+    };
+    const ndaPullSoft = () => ndaPullMax() * 1.08;  // raw px yielding half the stretch
+    const NDA_PULL_RELEASE = 0.6;                   // fraction of max at which an edge lets go
+    let ndaPan = 0;        // px the strip is pulled left of its resting position
+    let ndaPanTarget = 0;  // where the eased glide is heading
+    let ndaRaf = 0;
+    let ndaGliding = false;
+    let ndaPull = 0;       // visual stretch beyond the edge
+    let ndaPullDir = 0;    // +1 stretch right (start), -1 stretch left (end)
+    let ndaEdgeRaw = 0;    // raw overscroll banked at the edge
+    let ndaEdgeTimer = 0;
+    let ndaSpringRaf = 0;
+    let ndaSpringing = false;
+
+    const ndaStep = () => {
+      if (ndaBlocks.length > 1) return ndaBlocks[1].offsetLeft - ndaBlocks[0].offsetLeft;
+      return ndaBlocks[0] ? ndaBlocks[0].offsetWidth : 0;
+    };
+    // each rest position centres the first/last block in the viewport instead of
+    // hugging the content column: pad the strip by half the empty space a side
+    const ndaLayout = () => {
+      if (!ndaTrack || !ndaViewport || !ndaBlocks.length) return;
+      const bw = ndaBlocks[0].offsetWidth;
+      const pad = Math.max(0, (ndaViewport.clientWidth - bw) / 2);
+      ndaTrack.style.paddingLeft = pad.toFixed(1) + 'px';
+      ndaTrack.style.paddingRight = pad.toFixed(1) + 'px';
+    };
+    // width of the whole strip including both centring pads, so the strip can pan
+    // until its last block sits centred in the viewport
+    const ndaStride = () => {
+      if (!ndaTrack) return 0;
+      const last = ndaBlocks[ndaBlocks.length - 1];
+      if (!last) return 0;
+      const padR = parseFloat(getComputedStyle(ndaTrack).paddingRight) || 0;
+      return last.offsetLeft + last.offsetWidth + padR;
+    };
+    const ndaMax = () => {
+      if (!ndaTrack || !ndaViewport) return 0;
+      return Math.max(0, ndaStride() - ndaViewport.clientWidth);
+    };
+    // park the strip exactly on an edge (and stop any glide) so the rubber band
+    // starts attached to the edge rather than while the eased pan is still late
+    const stopNdaGlide = (edge) => {
+      cancelAnimationFrame(ndaRaf);
+      ndaGliding = false;
+      ndaPan = edge;
+      ndaPanTarget = edge;
+    };
+
+    const updateNdaThumb = () => {
+      if (!ndaThumb || !ndaScroll || !ndaTrack) return;
+      const trackW = ndaScroll.clientWidth;
+      const contentW = ndaStride();
+      const visW = ndaViewport ? ndaViewport.clientWidth : 0;
+      if (!trackW || !contentW) return;
+      const thumbW = Math.max(10, Math.min(trackW, (trackW * (visW / contentW)) / 3));
+      const max = ndaMax();
+      const x = max > 0 ? (trackW - thumbW) * (ndaPan / max) : 0;
+      ndaThumb.style.width = thumbW.toFixed(1) + 'px';
+      ndaThumb.style.transform = 'translate(' + x.toFixed(1) + 'px, -50%)';
+    };
+
+    const applyNda = () => {
+      if (ndaTrack) {
+        const x = -ndaPan + ndaPull * ndaPullDir;
+        ndaTrack.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
+      }
+      updateNdaThumb();
+    };
+
+    // rubber-band: past either edge the strip stretches with growing resistance
+    const ndaPullFromRaw = (raw) => {
+      const max = ndaPullMax();
+      return max * (raw / (raw + ndaPullSoft()));
+    };
+
+    const ndaSpring = () => {
+      cancelAnimationFrame(ndaSpringRaf);
+      ndaEdgeRaw = 0;
+      if (reducedMotion) { ndaPull = 0; ndaPullDir = 0; applyNda(); return; }
+      if (ndaSpringing) return;
+      ndaSpringing = true;
+      let last = 0;
+      const tick = (now) => {
+        // decay by elapsed time, not frame count, so the release stays springy
+        // at 60/120Hz alike
+        const dt = last ? Math.min(48, now - last) : 16;
+        last = now;
+        ndaPull *= Math.pow(0.8, dt / 16);
+        if (ndaPull < 0.4) {
+          ndaPull = 0;
+          ndaPullDir = 0;
+          ndaSpringing = false;
+          applyNda();
+          return;
+        }
+        applyNda();
+        ndaSpringRaf = requestAnimationFrame(tick);
+      };
+      ndaSpringRaf = requestAnimationFrame(tick);
+    };
+
+    const ndaRelease = (dir) => {
+      clearTimeout(ndaEdgeTimer);
+      cancelAnimationFrame(ndaSpringRaf);
+      ndaSpringing = false;
+      ndaEdgeRaw = 0;
+      ndaPull = 0;
+      ndaPullDir = 0;
+      applyNda();
+      if (dir < 0) {
+        // end edge: hand forward to the site footer
+        if (footerEl) { cancelAnimationFrame(ndaRaf); ndaGliding = false; animateTo(footerOffset()); }
+      } else {
+        goTo(target - 1);  // start edge: hand back to BM
+      }
+    };
+
+    // d>0 scrolls forward (toward the end), d<0 scrolls back (toward the start)
+    const ndaEdge = (d) => {
+      cancelAnimationFrame(ndaSpringRaf);
+      ndaSpringing = false;
+      const wantDir = d < 0 ? 1 : -1;
+      if (!ndaPullDir) stopNdaGlide(wantDir === 1 ? 0 : ndaMax());
+      if (ndaPullDir && wantDir !== ndaPullDir) {
+        // unwinding a stretch: shrink it, never release from here
+        ndaEdgeRaw = Math.max(0, ndaEdgeRaw - Math.abs(d));
+        if (!ndaEdgeRaw) { ndaPull = 0; ndaPullDir = 0; applyNda(); return; }
+        ndaPull = ndaPullFromRaw(ndaEdgeRaw);
+        applyNda();
+        clearTimeout(ndaEdgeTimer);
+        ndaEdgeTimer = setTimeout(ndaSpring, 140);
+        return;
+      }
+      ndaPullDir = wantDir;
+      ndaEdgeRaw += Math.abs(d);
+      ndaPull = ndaPullFromRaw(ndaEdgeRaw);
+      applyNda();
+      if (ndaPull >= ndaPullMax() * NDA_PULL_RELEASE) {
+        if (wantDir === 1) { ndaRelease(1); return; }
+        if (wantDir === -1 && footerEl) { ndaRelease(-1); return; }
+      }
+      clearTimeout(ndaEdgeTimer);
+      ndaEdgeTimer = setTimeout(ndaSpring, 140);
+    };
+
+    const ndaGlide = () => {
+      if (ndaGliding) return;
+      ndaGliding = true;
+      const tick = () => {
+        const diff = ndaPanTarget - ndaPan;
+        if (Math.abs(diff) < 0.4) {
+          ndaPan = ndaPanTarget;
+          applyNda();
+          ndaGliding = false;
+          return;
+        }
+        ndaPan += diff * NDA_EASE;
+        applyNda();
+        ndaRaf = requestAnimationFrame(tick);
+      };
+      ndaRaf = requestAnimationFrame(tick);
+    };
+
+    const ndaSetPan = (px, glide) => {
+      if (ndaPull || ndaPullDir) {
+        clearTimeout(ndaEdgeTimer);
+        cancelAnimationFrame(ndaSpringRaf);
+        ndaSpringing = false;
+        ndaPull = 0;
+        ndaPullDir = 0;
+        ndaEdgeRaw = 0;
+      }
+      ndaPanTarget = Math.max(0, Math.min(px, ndaMax()));
+      if (reducedMotion || !glide) {
+        cancelAnimationFrame(ndaRaf);
+        ndaGliding = false;
+        ndaPan = ndaPanTarget;
+        applyNda();
+        return;
+      }
+      ndaGlide();
+    };
+
+    // wheel over the bento strip: pan continuously; at either edge the strip
+    // stretches like a taut band and springs back. The start edge only lets go
+    // to BM once the pull passes the release threshold, so leaving is deliberate.
+    const ndaWheel = (e) => {
+      e.preventDefault();
+      let d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (e.deltaMode === 1) d *= 16;                                                  // lines
+      else if (e.deltaMode === 2) d *= (ndaViewport ? ndaViewport.clientWidth : 800);  // pages
+      if (ndaEdgeRaw || ndaPullDir) { ndaEdge(d); return; }
+      const max = ndaMax();
+      if (d > 0 && ndaPanTarget >= max - 0.5) { ndaEdge(d); return; }  // end edge
+      if (d < 0 && ndaPanTarget <= 0.5) { ndaEdge(d); return; }        // start edge
+      ndaSetPan(ndaPanTarget + d, true);
+    };
+
+    // Background clips marked with data-loop-pause replay on a loop, holding a
+    // beat (ms) between plays rather than looping seamlessly. Only the active
+    // panel's clip restarts, so a parked one never wakes up off-screen.
+    panels.forEach((p, k) => {
+      const v = p.querySelector('.panel-video[data-loop-pause]');
+      if (!v) return;
+      const wait = parseInt(v.dataset.loopPause, 10) || 0;
+      v.addEventListener('ended', () => {
+        clearTimeout(v._loopTimer);
+        v._loopTimer = setTimeout(() => {
+          v._loopTimer = 0;
+          if (k === active) playPanelVideo(v);
+        }, wait);
+      });
+    });
+
     // measure the real panel height (100vh) rather than innerHeight, so the maths
     // stays right on mobile where the visible viewport differs
     let vh = window.innerHeight || 1;
@@ -285,17 +647,19 @@
     };
     measure();
 
-    // Snap offsets: one per panel, plus the footer when the page has one. Without
-    // a footer the last panel is simply the end of the page — no wrap-around.
+    // Snap offsets: cumulative, one per panel, so a shorter closing panel still
+    // lands correctly. Everything after the last panel — the closing panel and
+    // the site footer — scrolls natively instead of snapping.
     const footerEl = document.querySelector('.sfooter');
-    const footerIndex = footerEl ? panels.length : -1;
     const footerOffset = () => Math.max(0,
       document.documentElement.scrollHeight - document.documentElement.clientHeight);
     const positions = () => {
-      const ps = panels.map((_, i) => i * vh);
-      if (footerEl) ps.push(Math.max(footerOffset(), (panels.length - 1) * vh));
+      const ps = [];
+      let acc = 0;
+      panels.forEach((p) => { ps.push(Math.round(acc)); acc += p.getBoundingClientRect().height; });
       return ps;
     };
+    const lastStop = () => { const ps = positions(); return ps.length ? ps[ps.length - 1] : 0; };
 
     const nearestIndex = (y) => {
       const ps = positions();
@@ -310,8 +674,16 @@
 
     // A footer taller than the viewport cannot be shown in one screen, so past
     // the last panel we hand scrolling back to the browser instead of snapping.
-    const footerFree = () => !!footerEl && footerOffset() > footerIndex * vh &&
-      window.scrollY >= footerIndex * vh - 2;
+    const footerFree = () => !!footerEl && footerOffset() > lastStop() &&
+      window.scrollY >= lastStop() - 2;
+    // the closing strip owns the wheel/keyboard/touch while the deck rests on the
+    // last panel; once the page has scrolled past it into the footer, scroll is free
+    const ndaEngaged = () => !!ndaTrack && panels[target] && panels[target].id === 'nda' &&
+      window.scrollY <= lastStop() + 1;
+    // past the last panel with a short footer: leaving it upward jumps straight
+    // back to the top of the closing section instead of creeping through it
+    const footerJump = () => !!footerEl && footerEl.offsetHeight <= vh - 1 &&
+      window.scrollY > lastStop() + 1;
 
     const paint = () => {
       const h = vh;
@@ -322,7 +694,7 @@
           if (inner && lastShift[i] !== '') { inner.style.transform = ''; lastShift[i] = ''; }
           if (bgs[i] && lastBg[i] !== '') { bgs[i].style.transform = ''; lastBg[i] = ''; }
           if (icons[i] && lastPar[i] !== '') { icons[i].style.removeProperty('--par'); lastPar[i] = ''; }
-          if (btns[i] && lastBtn[i] !== '') { btns[i].style.removeProperty('--btn-par'); lastBtn[i] = ''; }
+          if (btns[i] && lastBtn[i] !== '') { p.style.removeProperty('--btn-par'); lastBtn[i] = ''; }
           return;
         }
         // only the panels touching the viewport need per-frame updates
@@ -348,10 +720,11 @@
           if (lastPar[i] !== v) { icons[i].style.setProperty('--par', v); lastPar[i] = v; }
         }
 
-        // the button rides up in lockstep with the copy
+        // the CTA — and the panel's down cue, which inherits the variable —
+        // ride up in lockstep with the copy
         if (btns[i]) {
           const v = (-climb).toFixed(1) + 'px';
-          if (lastBtn[i] !== v) { btns[i].style.setProperty('--btn-par', v); lastBtn[i] = v; }
+          if (lastBtn[i] !== v) { p.style.setProperty('--btn-par', v); lastBtn[i] = v; }
         }
       });
 
@@ -378,7 +751,21 @@
     const onResize = () => {
       measure();
       cancelAnimationFrame(rafId);
+      cancelAnimationFrame(ndaRaf);
       animating = false;
+      if (ndaTrack) {
+        clearTimeout(ndaEdgeTimer);
+        cancelAnimationFrame(ndaSpringRaf);
+        ndaSpringing = false;
+        ndaEdgeRaw = 0;
+        ndaPull = 0;
+        ndaPullDir = 0;
+        ndaGliding = false;
+        ndaLayout();
+        ndaPan = Math.min(ndaPan, ndaMax());
+        ndaPanTarget = ndaPan;
+        applyNda();
+      }
       const ps = positions();
       window.scrollTo({ top: ps[Math.min(target, ps.length - 1)] || 0, behavior: 'instant' });
       paint();
@@ -405,10 +792,17 @@
       rafId = requestAnimationFrame(frame);
     };
 
-    const goTo = (i) => {
+    const goTo = (i, keepNda) => {
       const ps = positions();
       const t = Math.min(Math.max(i, 0), ps.length - 1);
       target = t;
+      // entering the closing screen starts on the first bento block, unless we
+      // are returning to it and should keep the strip where the user left it
+      if (panels[t] && panels[t].id === 'nda' && ndaTrack && !keepNda) {
+        cancelAnimationFrame(ndaRaf);
+        ndaGliding = false;
+        ndaSetPan(0, false);
+      }
       if (t < panels.length) history.replaceState(null, '', '#' + panels[t].id);
       setActive(t);
       if (reducedMotion) {
@@ -421,8 +815,27 @@
       animateTo(ps[t]);
     };
 
-    // one panel per gesture; the step past the last panel reveals the footer
+    // one panel per gesture; on the closing screen keyboard/touch step the bento
+    // strip a block at a time, and only leaving the first block hands back to the
+    // panels (up to BM)
     const step = (dir) => {
+      if (ndaTrack && ndaBlocks.length && panels[target] && panels[target].id === 'nda') {
+        const max = ndaMax();
+        if (dir > 0) {
+          if (ndaPanTarget >= max - 0.5 && footerEl) {   // at the end: into the footer
+            cancelAnimationFrame(ndaRaf);
+            ndaGliding = false;
+            animateTo(footerOffset());
+            return;
+          }
+          ndaSetPan(ndaPanTarget + ndaStep(), true);      // clamped by ndaSetPan
+        } else if (ndaPanTarget <= 0) {
+          goTo(target - 1);                               // start: back up to BM
+        } else {
+          ndaSetPan(ndaPanTarget - ndaStep(), true);
+        }
+        return;
+      }
       const next = target + dir;
       if (next < 0) return;
       goTo(next);
@@ -437,6 +850,12 @@
 
     addEventListener('wheel', (e) => {
       if (reducedMotion || e.ctrlKey) return; // let pinch-zoom through
+      if (!animating && ndaEngaged()) { ndaWheel(e); return; }
+      if (!animating && footerJump()) {        // short footer: snap back to NDA
+        e.preventDefault();
+        if (e.deltaY < 0) goTo(panels.length - 1, true);
+        return;
+      }
       if (!animating && footerFree()) return;  // native scroll inside the footer
       e.preventDefault();
       if (animating || Math.abs(e.deltaY) < 2) return;
@@ -450,13 +869,19 @@
     }, { passive: true });
     addEventListener('touchmove', (e) => {
       if (reducedMotion || e.touches.length > 1) return; // keep pinch-zoom working
+      if (!animating && ndaEngaged()) { e.preventDefault(); return; }
+      if (!animating && footerJump()) { e.preventDefault(); return; }
       if (!animating && footerFree()) return;            // native scroll inside the footer
       e.preventDefault();
     }, { passive: false });
     addEventListener('touchend', (e) => {
       const t = e.changedTouches && e.changedTouches[0];
       if (!t || reducedMotion) return;
-      if (!animating && footerFree()) return;
+      if (!animating && !ndaEngaged() && footerJump()) {
+        if (touchY - t.clientY < -SWIPE && gesture()) goTo(panels.length - 1, true);
+        return;
+      }
+      if (!animating && !ndaEngaged() && footerFree()) return;
       const dy = touchY - t.clientY;
       if (Math.abs(dy) < SWIPE) return;
       if (!gesture()) return;
@@ -470,19 +895,35 @@
       const dir = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 }[e.key];
       if (!dir) return;
       e.preventDefault();
+      if (dir < 0 && footerJump()) { goTo(panels.length - 1, true); return; }
       step(dir);
     });
 
-    dots.forEach((d, i) => {
+    dots.forEach((d) => {
       d.addEventListener('click', (e) => {
         e.preventDefault();
-        if (panels[i]) goTo(i);
+        const i = panelIndexById[d.getAttribute('href')];
+        if (i != null) goTo(i);
       });
     });
 
     const toTop = document.getElementById('toTop');
     if (toTop) toTop.addEventListener('click', () => goTo(0));
 
+    // Deep link (#pNN from the home-page cards): land straight on the linked
+    // panel before revealing the page, so the top panel never flashes first.
+    const hashMatch = /^#([a-z][a-z0-9-]*)$/.exec(location.hash);
+    if (hashMatch) {
+      const i = panels.findIndex((p) => p.id === hashMatch[1]);
+      if (i > 0) {
+        target = i;
+        window.scrollTo({ top: positions()[i] || 0, behavior: 'instant' });
+      }
+    }
+    document.documentElement.classList.remove('work-init');
+
+    ndaLayout();
+    applyNda();
     paint();
   }
 })();
