@@ -16,6 +16,9 @@
   --ghost: #dcdcdc;
   --vl-gap: clamp(120px, 25.3125vw, 324px);
   --maxw: 1280px;
+  --gutter: 40px;
+  /* distance from the viewport edge to the hero copy and the header items */
+  --edge: 124px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -45,9 +48,45 @@ a:hover { color: var(--gray-4); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 40px;
-  height: 62px;
-  transition: background .35s ease, box-shadow .35s ease, padding .35s ease, height .35s ease;
+  height: 64px;
+  padding-left: var(--edge);
+  /* anchor the right side to the true window edge: pages whose scrollbar takes
+     layout space vs. the design page (scrollbar hidden) otherwise shift the
+     menu/CTA sideways by the scrollbar width */
+  padding-right: calc(var(--edge) - (100vw - 100%));
+  transition: height .42s cubic-bezier(.22, 1, .36, 1), background .35s ease, box-shadow .35s ease;
+}
+
+/* The frosted bar is its own layer, so it can slide in AND out; the copy on top
+   never moves, which means the reverse (scrolling back up) animates too. */
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, .94);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .06);
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity .35s ease, transform .42s cubic-bezier(.22, 1, .36, 1);
+  pointer-events: none;
+}
+
+.navbar.scrolled::before { opacity: 1; transform: translateY(0); }
+
+/* Home page: once the hero is passed the header is off-screen (it is absolute
+   while unscrolled), so the whole header - frost and copy together - slides in
+   and out as one block. Everywhere else only the frost slides, so the
+   transparent header stays put. */
+body.home .navbar::before { transition: none; }
+
+body.home .navbar.scrolled { animation: navDrop .42s cubic-bezier(.22, 1, .36, 1); }
+
+@keyframes navDrop {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
 }
 
 .nav {
@@ -55,53 +94,69 @@ a:hover { color: var(--gray-4); }
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  height: 100%;
+  margin: 0;
 }
 
-.navbar .logo {
-  font-size: 16px;
+.navbar .logo,
+.navbar .logo-alt {
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: .02em;
   line-height: 18px;
   color: #ffffff;
   white-space: nowrap;
-  transition: color .35s ease, transform .35s ease, opacity .3s ease;
-  transform: translateY(29px);
+  transition: color .35s ease, opacity .3s ease;
 }
 
-.navbar .logo:hover { opacity: .78; }
+.navbar .logo:hover,
+.navbar .logo-alt:hover { opacity: .78; }
+
+/* На главной, пока хедер прозрачный над hero, имя уступает место переключателю
+   CSS; как только появляется белая полоса (.scrolled) и на всех остальных
+   страницах — снова «Антон Миньков». */
+.logo-alt { display: none; }
+body.home .navbar:not(.scrolled) .logo { display: none; }
+body.home .navbar:not(.scrolled) .logo-alt { display: inline-block; }
 
 .navbar .menu {
+  --menu-gap: 68px;
   display: flex;
-  gap: 68px;
-  transition: transform .35s ease;
-  transform: translateY(29px);
+  align-items: flex-start;
+  gap: var(--menu-gap);
 }
 
 .navbar .menu a {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: .02em;
   line-height: 18px;
   color: #ffffff;
+  white-space: nowrap;
   transition: color .3s ease, opacity .3s ease;
 }
 
 .navbar .menu a:hover { color: #ffffff; opacity: .75; }
 
+@media (max-width: 1200px) { .navbar .menu { --menu-gap: 40px; } }
+@media (max-width: 991px)  { .navbar .menu { --menu-gap: 22px; } }
+
 .navbar.scrolled {
-  background: rgba(255, 255, 255, .94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, .06);
-  height: 120px;
-  padding: 0 40px;
+  height: 72px;
 }
 
-.navbar.scrolled .logo { color: var(--ink); transform: translateY(0); }
-.navbar.scrolled .menu { transform: translateY(0); }
-.navbar.scrolled .hamburger { transform: translateY(0); }
+/* Whole-header slide-out used on the home page, where the header would otherwise
+   vanish instantly (it goes absolute as soon as .scrolled is dropped). Placed
+   after navDrop so it wins while both classes are present during the hide. */
+body.home .navbar.nav-out { animation: navUp .42s cubic-bezier(.22, 1, .36, 1) forwards; }
+
+@keyframes navUp {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-100%); opacity: 0; }
+}
+
+.navbar.scrolled .logo,
+.navbar.scrolled .logo-alt { color: var(--ink); }
 .navbar.scrolled .menu a { color: var(--gray-2); }
 .navbar.scrolled .menu a:hover { color: var(--ink); opacity: .75; }
 .navbar .menu a.active { color: #ffffff; }
@@ -109,37 +164,18 @@ a:hover { color: var(--gray-4); }
 
 /* Design page: flip the fixed navbar copy to dark while a light panel is behind it */
 .navbar.navbar--on-light .logo,
+.navbar.navbar--on-light .logo-alt,
 .navbar.navbar--on-light .menu a { color: var(--ink); }
 .navbar.navbar--on-light .menu a:hover { color: var(--ink); opacity: .7; }
 .navbar.navbar--on-light .menu a.active { color: var(--ink); }
 
-/* ToniQ Studio: flowing gradient wordmark with rising air bubbles */
-.navbar .menu a.toniq-link {
-  position: relative;
-  display: inline-block;
-}
-
-.navbar .menu a.toniq-link:hover { opacity: 1; }
-
-/* palette lifted from the home-page aurora animation (blue → purple → red →
-   yellow → green, looping back to blue); the flow runs continuously */
+/* ToniQ Studio menu item: plain text, like the items next to it */
 .toniq-text {
-  display: inline-block;
-  background-image: linear-gradient(270deg,
-    #0055FF 0%, #7B2BFF 20%, #FF0033 40%, #FFCC00 60%, #00CC66 80%, #0055FF 100%);
-  background-size: 200% 100%;
-  background-repeat: repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  animation: toniqFlow 4s linear infinite;
-}
-
-/* darker take on the same palette so it stays readable on the white navbar */
-.navbar.scrolled .toniq-text {
-  background-image: linear-gradient(270deg,
-    #003BB3 0%, #5A1FCC 20%, #C40026 40%, #8A6D00 60%, #007A3D 80%, #003BB3 100%);
+  display: inline;
+  background-image: none;
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+  animation: none;
 }
 
 @keyframes toniqFlow {
@@ -154,6 +190,7 @@ a:hover { color: var(--gray-4); }
   bottom: 100%;
   height: 0;
   pointer-events: none;
+  display: none;
 }
 
 /* bubble tints come from the same palette as the wordmark gradient */
@@ -165,7 +202,8 @@ a:hover { color: var(--gray-4); }
   --c5: #00CC66;
 }
 
-.navbar.scrolled .toniq-bubbles {
+.navbar.scrolled .toniq-bubbles,
+.navbar.navbar--on-light .toniq-bubbles {
   --c1: #003BB3;
   --c2: #6E6E6E;
   --c3: #C40026;
@@ -254,8 +292,6 @@ body.menu-open .logo { color: var(--ink); }
   cursor: pointer;
   position: relative;
   z-index: 70;
-  transition: transform .35s ease;
-  transform: translateY(29px);
 }
 
 .hamburger span,
@@ -275,11 +311,121 @@ body.menu-open .logo { color: var(--ink); }
 
 .navbar.scrolled .hamburger span,
 .navbar.scrolled .hamburger span::before,
-.navbar.scrolled .hamburger span::after { background: var(--ink); }
+.navbar.scrolled .hamburger span::after,
+.navbar.navbar--on-light .hamburger span,
+.navbar.navbar--on-light .hamburger span::before,
+.navbar.navbar--on-light .hamburger span::after { background: var(--ink); }
 
 body.menu-open .hamburger span { background: transparent; }
 body.menu-open .hamburger span::before { top: 0; transform: rotate(45deg); background: var(--ink); }
 body.menu-open .hamburger span::after { top: 0; transform: rotate(-45deg); background: var(--ink); }
+
+/* ---------------- Header states ----------------
+   .navbar   — the hero/intro state: transparent, white copy. On the home page
+               it is position:absolute so it scrolls away with the hero section.
+   .scrolled — the edge-to-edge 72px frosted bar that appears everywhere else
+               (and on the home page once the hero is passed), with dark copy.
+   .navbar--on-light — same transparent bar, but ink copy over a light panel
+               (used on the design deck, which has no frosted bar at all).
+   Both states share the same item layout: logo left, menu + CTA right.
+   The hero bar is 70px tall so the centred menu line (18px) sits 26px from
+   the top edge; the scrolled bar is 72px. */
+body.home .navbar:not(.scrolled) { position: absolute; height: 70px; }
+
+/* menu sits beside the CTA with a 44px gap */
+.navbar .menu { align-items: center; margin-left: auto; margin-right: var(--menu-gap); }
+
+.navbar .logo { font-weight: 400; }
+
+/* CTA — white outline over the hero/intro, solid purple in the bar. */
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  height: 32px;
+  padding: 0 18px;
+  border: 1px solid rgba(238, 242, 255, .22);
+  border-radius: 999px;
+  background: transparent;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  pointer-events: auto;
+  transition: background .3s ease, color .3s ease, border-color .3s ease;
+}
+
+.nav-cta:hover { background: #ffffff; border-color: #ffffff; color: var(--ink); }
+
+.navbar.scrolled .nav-cta { border-color: #5534DC; background: #5534DC; color: #ffffff; }
+.navbar.scrolled .nav-cta:hover { background: #4529b8; border-color: #4529b8; color: #ffffff; }
+
+/* Design deck, light panels: the outline CTA flips to ink on the light ground. */
+.navbar.navbar--on-light .nav-cta { border-color: rgba(26, 26, 26, .3); background: transparent; color: var(--ink); }
+.navbar.navbar--on-light .nav-cta:hover { background: var(--ink); border-color: var(--ink); color: #ffffff; }
+
+/* Paper-plane swap: on hover the plane flies up-right and an identical one
+   arrives from the bottom-left; on leave the reverse (down-left out, in from
+   the top-right). Pure transition reversal gives both directions. */
+.nav-cta-icon {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.nav-cta-icon svg {
+  position: absolute;
+  inset: 0;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .38s cubic-bezier(.22, 1, .36, 1), opacity .3s ease;
+}
+
+.nav-cta-icon svg:nth-child(1) { transform: translate(0, 0); opacity: 1; }
+.nav-cta-icon svg:nth-child(2) { transform: translate(-14px, 14px); opacity: 0; }
+
+.nav-cta:hover .nav-cta-icon svg:nth-child(1) { transform: translate(14px, -14px); opacity: 0; }
+.nav-cta:hover .nav-cta-icon svg:nth-child(2) { transform: translate(0, 0); opacity: 1; }
+
+/* Arrow fly, left -> right: on hover the arrow in the disc flies out to the
+   right and an identical one arrives from the left. It is knocked out of the
+   disc by a mask, so the disc (and its background) stays put - only the arrow
+   moves. Used by "Другие проекты" and "Смотреть проект". */
+.fly-out { transform: translate(0, 0); }
+.fly-in  { transform: translate(-25px, 0); }
+.fly-out,
+.fly-in { transition: transform .38s cubic-bezier(.22, 1, .36, 1); }
+
+.ex-all:hover .fly-out,
+.panel-btn:hover .fly-out { transform: translate(25px, 0); }
+
+.ex-all:hover .fly-in,
+.panel-btn:hover .fly-in { transform: translate(0, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fly-out,
+  .fly-in { transition: none; }
+}
+
+@media (max-width: 767px) {
+  .nav-cta { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar { transition: none; }
+  .navbar::before { transition: none; }
+  .navbar.scrolled,
+  body.home .navbar.scrolled,
+  body.home .navbar.nav-out { animation: none; }
+}
 
 .overlay {
   position: fixed;
@@ -313,122 +459,133 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background: #0B143B;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  background: #000;
 }
 
-#heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  /* first thing to appear on load: the animation layer */
+  opacity: 0;
+  animation: heroFadeIn 1s ease .1s both;
+}
 
-.fallback-bg {
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#heroLiquid {
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, #0B143B 0%, #17256C 22%, #0055FF 40%, #7A2F99 55%, #FF0033 68%, #FFCC00 84%, #00CC66 100%);
-  background-size: 300% 300%;
-  animation: drift 26s ease-in-out infinite;
+  width: 100%; height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity .8s cubic-bezier(.22, 1, .36, 1);
 }
 
-@keyframes drift {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
-}
+.hero.is-live #heroLiquid { opacity: 1; }
 
-body.webgl .fallback-bg { display: none; }
-
-.hero-veil {
-  position: absolute; inset: 0;
-  background: radial-gradient(120% 90% at 50% 45%, rgba(11, 20, 59, .18) 0%, rgba(11, 20, 59, .55) 100%);
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 2;
-  padding: 0 24px;
+.hero-liquid-fallback {
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
   width: 100%;
+  height: auto;
+  transform: translateY(-50%);
+  transition: opacity .6s cubic-bezier(.22, 1, .36, 1);
+}
+
+.hero-liquid-fallback path { fill: #1400ff; }
+
+.hero.is-live .hero-liquid-fallback { opacity: 0; }
+
+/* Hero lead — the statement crossing the liquid logotype. Its first line sits on
+   the centre of the "АНТОН" word of the background mark: the mark (1694x426) is
+   scaled to the hero width and vertically centred, and the word's centre lies at
+   0.754 of the mark height — i.e. 50vh + 0.254 * markHeight from the top. The
+   min() also covers the canvas' 0.9h clamp on very wide viewports. */
+.hero-lead {
+  --hero-lead-fs: clamp(22px, 3.8vw, 72px);
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(50vh + min(6.388vw, 22.86vh) - var(--hero-lead-fs) * 0.62 - 8px);
+  z-index: 3;
+  padding: 0 var(--edge);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  transform: translateY(-40px);
+  color: #ffffff;
+  pointer-events: none;
 }
 
-@keyframes heroReveal {
-  from { opacity: 0; transform: translateY(34px); }
+/* Staggered load reveal: layer, then lead line 1, 2, 3, then the bottom rail. */
+.hero-lead-big {
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: heroLineIn .95s cubic-bezier(.22, 1, .36, 1) both;
+}
+.hero-lead-big:nth-child(1) { animation-delay: .85s; }
+.hero-lead-big:nth-child(2) { animation-delay: 1.05s; }
+.hero-lead-big:nth-child(3) { animation-delay: 1.25s; }
+
+@keyframes heroLineIn {
+  from { opacity: 0; transform: translateY(32px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.hero-inner > * {
-  opacity: 0;
-  animation: heroReveal 1.1s cubic-bezier(.22, 1, .36, 1) forwards;
-}
-
-.hero-topline      { animation-delay: .10s; }
-.hero-name-wrap    { animation-delay: .28s; }
-.hero-role         { animation-delay: .52s; }
-.hero-prev         { animation-delay: .70s; }
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-inner > * { animation: none; opacity: 1; }
-  .hero-contacts { animation: none; opacity: 1; }
-  .hero-scroll { animation: none; opacity: 1; }
-}
-
-.hero-topline {
-  position: relative;
-  top: -24px;
+.hero-lead-small,
+.hero-lead-big {
+  font-size: var(--hero-lead-fs);
+  font-weight: 400;
+  line-height: 1.24;
+  letter-spacing: 0;
+  /* one line each, box hugging the text so its measured width is the line's
+     natural width; JS scales the size so the longest line fills the content
+     column, keeping the statement at three lines on every screen */
   white-space: nowrap;
-  font-size: .892rem;
-  font-weight: 600;
-  letter-spacing: .3em;
-  text-indent: .3em;
-  text-transform: uppercase;
-  line-height: 1.4;
-  color: #ffffff;
-  margin-top: 40px;
-  margin-bottom: 14px;
+  width: max-content;
 }
 
-.hero-name-wrap {
-  position: relative;
-  top: -16px;
-  margin: 49px 0 52px;
+.hero-lead-link {
+  color: #7566F6;
+  pointer-events: auto;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  transition: color .3s ease, opacity .3s ease;
 }
 
-.hero-name {
-  font-size: clamp(2.9rem, 12vw, 120px);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -.03em;
-  color: #ffffff;
+.hero-lead-link:hover { color: #9a8ffb; }
+
+/* Bottom rail: previous employers · scroll cue · contacts */
+.hero-bottom {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 26px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 0 var(--edge);
+  pointer-events: none;
+  opacity: 0;
+  animation: contactsIn 1.2s ease 1.6s forwards;
 }
 
-.hero-name .dim { color: rgba(255, 255, 255, .22); }
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-.hero-role {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: .02em;
-  line-height: 1.5;
-  text-wrap: balance;
-  color: #ffffff;
-  margin-top: 16px;
-  margin-bottom: 12px;
+@keyframes contactsIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .hero-prev {
-  position: relative;
-  top: 8px;
-  margin-top: 0;
+  grid-column: 1;
+  justify-self: start;
+  min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 48px;
+  gap: 32px;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: .02em;
@@ -446,6 +603,8 @@ body.webgl .fallback-bg { display: none; }
 .hero-prev a {
   position: relative;
   color: inherit;
+  white-space: nowrap;
+  pointer-events: auto;
   transition: color .3s ease, opacity .3s ease;
 }
 
@@ -475,23 +634,13 @@ body.webgl .fallback-bg { display: none; }
 }
 
 .hero-contacts {
-  position: absolute;
-  left: 0; right: 0;
-  bottom: 136px;
-  z-index: 4;
+  grid-column: 3;
+  justify-self: end;
+  min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 48px;
-  padding: 0 40px;
-  pointer-events: none;
-  opacity: 0;
-  animation: contactsIn 1.2s ease .9s forwards;
-}
-
-@keyframes contactsIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  gap: 32px;
+  flex-wrap: wrap;
 }
 
 .hero-contacts a { pointer-events: auto; }
@@ -568,21 +717,16 @@ body.webgl .fallback-bg { display: none; }
   .contact-qr { display: none; }
 }
 
-/* Hero scroll cue — chevron icon only, no outline. Colour matches the hero
-   divider line (--cue). */
+/* Hero scroll cue — chevron icon only, no outline. */
 .hero-scroll {
-  position: absolute;
-  left: 50%;
-  bottom: 40px;
-  transform: translateX(-50%);
-  z-index: 3;
+  grid-column: 2;
+  justify-self: center;
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   color: #ffffff;
-  opacity: 0;
-  animation: contactsIn 1.2s ease .9s forwards;
+  pointer-events: auto;
   transition: opacity .3s ease;
 }
 
@@ -607,9 +751,12 @@ body.webgl .fallback-bg { display: none; }
 .hero-scroll:hover { opacity: .75; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-name-track { animation: none; }
-  .fallback-bg { animation: none; }
+  .hero-bg,
+  .hero-lead,
+  .hero-lead-big,
+  .hero-bottom { animation: none; opacity: 1; }
   .hero-scroll svg { animation: none; }
+  .hero-liquid-fallback { transition: none; }
 }
 
 /* ---------------- Work cover (inner page) ---------------- */
@@ -716,11 +863,174 @@ body.webgl .fallback-bg { display: none; }
 /* ---------------- Expertise ---------------- */
 
 .expertise {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: calc(var(--vl-gap) / 2) 0 calc(var(--vl-gap) / 2);
+  /* The dark hero hands over to the content on white paper through the tall
+     luminous seam below; the content then opens on the page's half-gap. */
+  background: var(--paper);
+  padding: 0 0 calc(var(--vl-gap) / 2);
+}
+
+/* The content column opens one half-gap below the seam and is pulled back up
+   320px (the sphere sits lower now), so the heading arrives right after the
+   white tail of the sphere. Narrow viewports get a gentler pull - the seam
+   is shorter there and the heading must stay on the white. */
+.expertise > .container {
+  padding-top: calc(var(--vl-gap) / 2);
+  margin-top: -176px;
+}
+
+@media (max-width: 1200px) {
+  .expertise > .container { margin-top: -36px; }
+}
+
+@media (max-width: 900px) {
+  .expertise > .container { margin-top: 44px; }
+}
+
+/* The seam: a tall stretch of dark space carrying the hand-off. Everything is
+   cut from one circle (--arc-r): the arched horizon line (its ends level with
+   the block, its centre lifted) and one radial ramp around it — white deep
+   inside the sphere, climbing to a luminous rim, then the atmosphere fading
+   back to black above it. Every band is concentric with the arc, so the block
+   reads as a sphere cut off by the left and right screen edges. It sits
+   entirely below the hero, so nothing of it shows while the hero is on
+   screen. main.js drives --glint from the scroll, so the orange glint rides
+   the arc from the left screen edge to the right as the seam travels up. */
+.seam {
+  /* --arc-r is sized so the arc lifts --arc-rise (≈140px at 1440) between the
+     centre and the screen edges: rise = r - sqrt(r² - 50vw²). --drop lowers
+     the whole sphere (and everything after it) inside a taller block. */
+  --line-y: calc(50% + var(--drop) / 2); /* where the arc ends sit */
+  --drop: 140px;                 /* extra dark space above the sphere */
+  --arc-r: 133.48vw;             /* arc radius */
+  --arc-rise: 9.72vw;            /* lift of the apex above the ends */
+  position: relative;
+  height: calc(clamp(460px, 64vh, 780px) + var(--drop));
+  overflow: hidden;
+  background: radial-gradient(circle var(--arc-r) at 50% calc(var(--line-y) + var(--arc-r) - var(--arc-rise)),
+    #ffffff 0,
+    #ffffff calc(var(--arc-r) - 270px),
+    #d5ddff calc(var(--arc-r) - 210px),
+    #a9b8f8 calc(var(--arc-r) - 150px),
+    #6f86ee calc(var(--arc-r) - 90px),
+    #3f5be4 calc(var(--arc-r) - 40px),
+    #4a63e8 calc(var(--arc-r) - 10px),
+    #8fa6ff var(--arc-r),
+    #1d2f9e calc(var(--arc-r) + 5px),
+    #16258c calc(var(--arc-r) + 45px),
+    #0d1a66 calc(var(--arc-r) + 85px),
+    #050b33 calc(var(--arc-r) + 125px),
+    #000000 calc(var(--arc-r) + 175px));
+}
+
+/* the sphere settles into the paper: a soft white veil over the last stretch
+   of the block, so its bottom edge is clean white on any viewport height */
+.seam::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 78%);
+  pointer-events: none;
+}
+
+/* The hero's animated plus-lattice continues into the seam on this canvas:
+   seam-crosses.js draws the same WebGL reveal field in the hero's coordinate
+   frame (same grid, same ink, same shared clock), so the pattern runs across
+   the hero's bottom edge as one picture and melts away right above the arc.
+   The canvas spans the top half of the seam - exactly down to where the arc
+   meets the screen edges. */
+.seam-crosses {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* the lattice canvas reaches exactly down to the arc's ends on the screen
+     edges (the seam's --line-y) */
+  height: calc(50% + var(--drop) / 2);
+  display: block;
+  pointer-events: none;
+}
+
+/* the aurora bloom hugging the arc — the glow just outside the circle,
+   breathing slowly */
+.seam-veil {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--line-y) - var(--arc-rise));
+  width: calc(var(--arc-r) * 2);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% 0;
+  box-shadow: 0 0 140px 12px rgba(58, 88, 255, .34);
+  animation: seamVeil 9s ease-in-out infinite alternate;
+}
+
+/* the arch line — drawn from the apex outward on approach */
+.seam-line {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--line-y) - var(--arc-rise));
+  width: calc(var(--arc-r) * 2);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% 0;
+  /* a thin ring of light along the arc: the brand blue at the screen edges
+     (the visible span is the element's centre ~37.5%..62.5%), white in the
+     middle. Always complete - no draw-in. */
+  background: linear-gradient(90deg,
+    #0055ff 36%,
+    #ffffff 50%,
+    #0055ff 64%);
+  -webkit-mask-image: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 3px),
+    #000 calc(100% - 1px));
+  mask-image: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 3px),
+    #000 calc(100% - 1px));
+}
+
+/* the glint: a soft orange spark riding the arc. --glint (0..1, driven by the
+   scroll) swings the wrapper from the left screen edge (-22deg) over the apex
+   to the right edge (+22deg). */
+.seam-glint {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--line-y) + var(--arc-r) - var(--arc-rise));
+  width: 0;
+  height: 0;
+  rotate: calc(-22deg + var(--glint, 0) * 44deg);
+}
+
+.seam-glint i {
+  position: absolute;
+  left: 0;
+  top: calc(-1 * var(--arc-r));
+  translate: -50% -50%;
+  width: clamp(280px, 36vw, 600px);
+  height: 12px;
+  border-radius: 999px;
+  /* a bright orange core that fades out toward both ends */
+  background: linear-gradient(90deg,
+    rgba(255, 122, 26, 0),
+    rgba(255, 132, 30, .4) 26%,
+    rgba(255, 148, 42, .95) 44%,
+    rgba(255, 154, 48, .98) 56%,
+    rgba(255, 132, 30, .4) 74%,
+    rgba(255, 122, 26, 0));
+  filter: blur(4px);
+  box-shadow: 0 0 28px rgba(255, 150, 60, .7);
+}
+
+@keyframes seamVeil {
+  from { opacity: .72; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seam-glint { display: none; }
+  .seam-veil { animation: none; }
 }
 
 .ex-kicker {
@@ -732,15 +1042,7 @@ body.webgl .fallback-bg { display: none; }
   margin-bottom: 18px;
 }
 
-.ex-title {
-  font-size: clamp(1.9rem, 3.4vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -.02em;
-  line-height: 1.12;
-  color: var(--ink);
-  max-width: 900px;
-  margin-bottom: 40px;
-}
+.ex-title { margin-bottom: 0; }
 
 @media (min-width: 768px) {
   .ex-title span { display: block; }
@@ -762,9 +1064,19 @@ body.webgl .fallback-bg { display: none; }
    and the hairline under the title thickens into the full aurora rule. The
    small print takes a deeper end-stop so it still clears AA at 16px. */
 
-.xi-head { max-width: 1120px; }
+.xi { margin-top: 20px; }
+
+/* Section openers: the display title leads the content column (flush with the
+   rows and cards), with a generous gap down to the content. */
+.xi-head,
+.ex-head {
+  max-width: none;
+  padding-bottom: 96px;
+}
 
 .xi-kicker {
+  /* the hero's down-arrow anchors here: land 96px below the frosted scrolled header */
+  scroll-margin-top: calc(72px + 96px);
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: .16em;
@@ -773,23 +1085,23 @@ body.webgl .fallback-bg { display: none; }
   margin-bottom: 22px;
 }
 
-/* One heading, two thoughts on their own lines, flush with the content strip */
-.xi-title {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(8px, 1.1vw, 18px);
-  font-size: clamp(20px, 3.6vw, 44px);
-  font-weight: 800;
-  letter-spacing: -.03em;
-  line-height: 1.18;
-  color: var(--ink);
+/* Main-page section headings: set in the hero lead's type (Inter, regular
+   weight, tight leading), ink dark, flush with the content column below. */
+.sec-title {
+  font-size: clamp(22px, 3.8vw, 72px);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.24;
+  color: #1a1a1a;
+  text-align: left;
 }
 
-.xi-title span { display: block; }
+/* the hero's down-arrow anchors here: land 96px below the frosted scrolled header */
+.xi-title { scroll-margin-top: calc(72px + 96px); }
 
 .xi-list {
   list-style: none;
-  margin: clamp(44px, 5.4vw, 80px) 0 0;
+  margin: 0;
   padding: 0;
 }
 
@@ -804,7 +1116,8 @@ body.webgl .fallback-bg { display: none; }
   grid-template-rows: auto auto;
   column-gap: var(--xi-gap);
   align-items: start;
-  padding: clamp(13px, 1.6vw, 23px) 0;
+  /* 22px less top and bottom => the gap between rows drops by 44px */
+  padding: max(0px, calc(clamp(13px, 1.6vw, 23px) - 22px)) 0;
 }
 
 /* The ramp copy of a run of text, revealed left-to-right by a hard clip — the
@@ -845,13 +1158,16 @@ body.webgl .fallback-bg { display: none; }
   transition: clip-path .5s cubic-bezier(.22, 1, .36, 1) .04s;
 }
 
+/* Item headings share the display heading's voice: same family and tracking,
+   one step down in size, a gentle medium weight (not the old 800, which
+   shouted next to the light section title). */
 .xi-label {
   grid-area: 1 / 2;
   position: relative;
-  font-size: clamp(1.5rem, 2.7vw, 2.15rem);
-  font-weight: 800;
-  letter-spacing: -.02em;
-  line-height: 1.3;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -.015em;
+  line-height: 1.28;
   color: var(--ink);
   padding-bottom: clamp(12px, 1.4vw, 20px);
 }
@@ -878,16 +1194,26 @@ body.webgl .fallback-bg { display: none; }
 
 .xi-row.reveal.in .xi-label::after { transform: scaleX(1); }
 
-/* rows rise in one after another, matching the project cards below */
-.xi-row.reveal { transition: none; }
-.xi-row.reveal.in { animation: riseIn .7s cubic-bezier(.22, 1, .36, 1) backwards; }
+/* The expertise opener and its rows enter exactly like the hero lead: fade +
+   rise on the same easing and cadence, staggered row by row. */
+.xi-head.reveal,
+.xi-row.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: none;
+}
+
+.xi-head.reveal.in,
+.xi-row.reveal.in {
+  animation: heroLineIn .95s cubic-bezier(.22, 1, .36, 1) both;
+}
 
 /* explanation — a short column on the right, wrapping to a few lines */
 .xi-desc {
   grid-area: 2 / 3;
   margin-top: clamp(8px, 1vw, 14px);
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--gray-2);
   text-wrap: pretty;
   transition: transform .6s cubic-bezier(.22, 1, .36, 1) .05s, color .35s ease;
@@ -914,11 +1240,11 @@ body.webgl .fallback-bg { display: none; }
 }
 
 /* stagger the rows down the index as each one enters */
-.xi-row.reveal.in:nth-child(2) { animation-delay: .06s; --d: .06s; }
-.xi-row.reveal.in:nth-child(3) { animation-delay: .12s; --d: .12s; }
-.xi-row.reveal.in:nth-child(4) { animation-delay: .18s; --d: .18s; }
-.xi-row.reveal.in:nth-child(5) { animation-delay: .24s; --d: .24s; }
-.xi-row.reveal.in:nth-child(6) { animation-delay: .30s; --d: .30s; }
+.xi-row.reveal.in:nth-child(2) { animation-delay: .10s; --d: .10s; }
+.xi-row.reveal.in:nth-child(3) { animation-delay: .20s; --d: .20s; }
+.xi-row.reveal.in:nth-child(4) { animation-delay: .30s; --d: .30s; }
+.xi-row.reveal.in:nth-child(5) { animation-delay: .40s; --d: .40s; }
+.xi-row.reveal.in:nth-child(6) { animation-delay: .50s; --d: .50s; }
 
 @media (max-width: 900px) {
   .xi-row {
@@ -960,14 +1286,16 @@ body.webgl .fallback-bg { display: none; }
 
 .stat {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 32px 36px 36px;
 }
 
+/* The figures read as a light display number (matching the site's display
+   voice), over a quiet uppercase label; the brand violet stays as the accent. */
 .stat-num {
   font-size: clamp(3rem, 4.6vw, 4.3rem);
-  font-weight: 700;
-  letter-spacing: -.03em;
+  font-weight: 500;
+  letter-spacing: -.02em;
   line-height: 1;
   color: #5534DC;
   font-variant-numeric: tabular-nums;
@@ -975,11 +1303,10 @@ body.webgl .fallback-bg { display: none; }
 
 .stat-label {
   margin-top: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--gray-3);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--ink);
 }
 
 .stat-note {
@@ -1137,10 +1464,9 @@ body.webgl .fallback-bg { display: none; }
   padding: 7px 7px 7px 26px;
   border: 1px solid #5534DC;
   border-radius: 999px;
-  font-size: .78rem;
-  font-weight: 600;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .02em;
   color: #ffffff;
   background: #5534DC;
   transition: background .3s ease, color .3s ease, border-color .3s ease;
@@ -1342,9 +1668,9 @@ body.webgl .fallback-bg { display: none; }
 
 /* ---------------- Project cards ---------------- */
 
-.pcards { padding: calc(var(--vl-gap) / 2) 0; background: #ededed; }
+.pcards { padding: calc(var(--vl-gap) / 2 + 20px) 0 calc(var(--vl-gap) / 2); background: #ededed; }
 
-.pcards .ex-title { margin-bottom: 44px; }
+.pcards .ex-title { margin-bottom: 0; }
 
 .pcards-grid {
   display: flex;
@@ -1482,7 +1808,7 @@ body.webgl .fallback-bg { display: none; }
 .pcard--sfera .pcard-desc { color: #1a1a1a; }
 
 /* Butik: wide dark card — copy on the left, the photo stack on the right. */
-.pcard.pcard--butik { background: #1a1a1a; }
+.pcard.pcard--butik { background: #000005; }
 
 .pcard--butik .pcard-link {
   display: grid;
@@ -1566,7 +1892,7 @@ body.webgl .fallback-bg { display: none; }
   border-radius: 16px;
 }
 
-.pcard--butik .butik-veil { background: #1a1a1a; }
+.pcard--butik .butik-veil { background: #000005; }
 
 .pcard {
   display: flex;
@@ -1619,13 +1945,15 @@ body.webgl .fallback-bg { display: none; }
 .pcard-logo--gosuslugi { width: calc(296px * .85); max-width: 100%; height: auto; }
 
 
+/* Card titles are the same subheading role as the expertise rows, so they wear
+   the identical size, weight and tracking for one continuous system. */
 .pcard-title {
   margin-top: clamp(28px, 3.6vw, 48px);
-  max-width: 20ch;
-  font-size: 36px;
-  font-weight: 700;
-  letter-spacing: -.025em;
-  line-height: 1.16;
+  max-width: 22ch;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -.015em;
+  line-height: 1.28;
   color: var(--ink);
   overflow-wrap: break-word;
   transition: color .45s ease;
@@ -1635,7 +1963,7 @@ body.webgl .fallback-bg { display: none; }
   margin-top: 16px;
   max-width: 40ch;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--gray-3);
   transition: color .45s ease;
 }
@@ -2242,9 +2570,6 @@ body.webgl .fallback-bg { display: none; }
 .butik-slides.is-shown img { animation-play-state: running; }
 .butik-slides.is-paused img { animation-play-state: paused; }
 
-/* Pause the stack while hovering the animation area */
-.pcard--butik .cover-art:hover .butik-slides img { animation-play-state: paused; }
-
 @media (prefers-reduced-motion: reduce) {
   .butik-slides { visibility: visible; }
   .butik-veil { display: none; }
@@ -2482,17 +2807,20 @@ body.webgl .fallback-bg { display: none; }
   /* the QR plate's padding — the wordmark aligns to the mark inside it, so the
      two values have to stay in step */
   --qr-pad: 8px;
-  background: var(--ink);
+  background: #000005;
   border-top: 1px solid rgba(255, 255, 255, .14);
-  /* 26 + the 10px on .sfooter-bottom = 36px under the last text row */
-  padding: 82px 0 26px;
+  /* 40px = the same gap as button->divider and divider->bottom text */
+  padding: 40px 0 26px;
   color: #ffffff;
 }
 
+/* stretch the footer to the same edges as the header copy (--edge, scrollbar-
+   compensated on the right so both align on every page) */
 .sfooter-inner {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 0 40px;
+  max-width: none;
+  margin: 0;
+  padding-left: var(--edge);
+  padding-right: calc(var(--edge) - (100vw - 100%));
 }
 
 .sfooter-nav {
@@ -2519,22 +2847,11 @@ body.webgl .fallback-bg { display: none; }
   }
 }
 
-/* the footer wordmark reuses the header's gradient + bubble animation, so it
-   needs the same positioning context */
-.sfooter-nav a.toniq-link {
-  position: relative;
-  display: inline-block;
-}
+/* ToniQ Studio sits in the footer nav as a plain item, like the others */
 
-.sfooter-nav a.toniq-link:hover {
-  color: inherit;
-  text-decoration: none;
-  opacity: .85;
-}
-
-/* nudged right of where the flex row would place it */
+/* aligned so the column's left edge matches the footer tagline below it */
 @media (min-width: 1201px) {
-  .sfooter-nav { position: relative; left: 174px; }
+  .sfooter-nav { position: relative; left: 146px; }
 }
 
 /* brand left, sections in the middle, contacts flush to the right edge.
@@ -2545,7 +2862,8 @@ body.webgl .fallback-bg { display: none; }
   align-items: stretch;
   justify-content: space-between;
   gap: 60px;
-  padding-bottom: 100px;
+  /* 40 + the 6px the CTA is nudged down = the same visible gap to the divider */
+  padding-bottom: 46px;
 }
 
 .sfooter-name {
@@ -2565,6 +2883,24 @@ body.webgl .fallback-bg { display: none; }
   line-height: 1.5;
   color: rgba(255, 255, 255, .64);
 }
+
+/* The header CTA repeated in the footer: bottom-aligned with the nav's last
+   item (ToniQ Studio) and left-aligned with the wordmark above it. */
+.sfooter-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sfooter-cta { margin-top: auto; }
+
+/* match the nav's last item, which is nudged 14px down off the QR baseline */
+@media (min-width: 768px) {
+  .sfooter-cta { transform: translateY(6px); }
+}
+
+/* keep it visible on mobile, unlike the header copy */
+.sfooter .nav-cta { display: inline-flex; }
 
 .sfooter-nav ul,
 .sfooter-contact ul { list-style: none; }
@@ -2613,7 +2949,7 @@ body.webgl .fallback-bg { display: none; }
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px 32px;
-  padding: 35px 0 10px;
+  padding: 40px 0 10px;
   border-top: 1px solid rgba(255, 255, 255, .14);
 }
 
@@ -2666,6 +3002,7 @@ body.webgl .fallback-bg { display: none; }
 /* ---------------- Responsive ---------------- */
 
 @media (max-width: 991px) {
+  :root { --edge: 56px; }
   .featured .ex-title { margin-bottom: 4rem; }
   .featured .col-art .cover-art { margin-top: 0; }
   .featured .row + .row { margin-top: 5.6rem; }
@@ -2679,37 +3016,44 @@ body.webgl .fallback-bg { display: none; }
 }
 
 @media (max-width: 767px) {
+  :root { --gutter: 20px; --edge: 20px; }
   .work-cover-inner { padding-top: 130px; padding-bottom: 210px; }
   .work-cover-left { width: 100%; }
   .cover-mark { margin-bottom: 32px; }
   .cover-btn { bottom: 96px; }
   .cover-more { bottom: 40px; }
-  .ex-title { margin-bottom: 36px; }
-  .navbar { padding: 16px 20px; height: 74px; }
-  .navbar.scrolled { padding: 16px 20px; }
+  .ex-title { margin-bottom: 0; }
+  .navbar { padding: var(--gutter); }
+  .navbar.scrolled { padding: var(--gutter); }
   .navbar .menu { display: none; }
   .nav { width: auto; margin: 0; }
   .hamburger { display: block; position: relative; }
-  .hero-contacts { bottom: 148px; padding: 0 16px; }
   .contact-link { font-size: 14px; gap: 8px; }
-  .hero-scroll { bottom: 52px; }
-  .hero-inner { padding: 120px 16px 96px; }
-  .hero-topline { white-space: normal; }
-  .hero-role { white-space: normal; }
-}
-
-@media (max-width: 560px) {
+  .hero-lead { padding: 0 var(--gutter); }
+  .hero-bottom {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 var(--gutter);
+    bottom: 26px;
+  }
   .hero-prev,
+  .hero-scroll,
+  .hero-contacts {
+    grid-column: 1;
+    justify-self: center;
+  }
+  .hero-prev { flex-wrap: wrap; justify-content: center; gap: 12px; font-size: 13px; }
   .hero-contacts { gap: 12px; }
 }
 
-@media (max-width: 359px) {
+@media (max-width: 560px) {
   .hero-scroll { display: none; }
-  .hero-contacts {
-    justify-content: center;
-    gap: 12px;
-    bottom: 148px;
-  }
+}
+
+@media (max-width: 359px) {
+  .hero-prev { gap: 10px; font-size: 12px; }
+  .hero-contacts { gap: 10px; }
+  .contact-link { font-size: 12px; }
 }
 
 /* ============================================================
@@ -2837,6 +3181,26 @@ body.work { background: var(--ink); }
   padding: 210px 40px 84px;
 }
 
+/* Design deck: line the copy column (logo / title / role) up with the header's
+   "Антон Миньков" left edge. The bespoke intro cover, the gosuslugi monitor,
+   the centred butik column and the NDA strip keep their own composition. */
+.panel:not(.panel--intro):not(.panel--butik):not(.panel--nda):not(#gosuslugi) .panel-inner {
+  max-width: none;
+  padding-left: var(--edge);
+  padding-right: var(--edge);
+}
+
+/* these panels carry long project descriptions — give the copy column room */
+#sfera .panel-text,
+#expertme .panel-text,
+#rosatom .panel-text,
+#myexport .panel-text,
+#inexpay .panel-text,
+#skillstech .panel-text,
+#bm .panel-text {
+  max-width: 800px;
+}
+
 /* copy + button sit 64px higher than the centred default */
 .panel-text {
   max-width: 620px;
@@ -2885,12 +3249,14 @@ body.work { background: var(--ink); }
   color: rgba(255, 255, 255, .8);
 }
 
+/* Same subheading role as the home-page cards: one size, weight and tracking
+   so the whole site reads in a single voice. */
 .panel-title {
   margin-top: 14px;
-  font-size: 36px;
-  line-height: 1.16;
-  font-weight: 700;
-  letter-spacing: -.02em;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  line-height: 1.28;
+  font-weight: 500;
+  letter-spacing: -.015em;
   color: #ffffff;
 }
 
@@ -2975,8 +3341,6 @@ body.work { background: var(--ink); }
 
 .panel--butik .panel-title {
   margin-top: 0;
-  font-size: 36px;
-  line-height: 1.22;
 }
 
 .panel--butik .panel-role-label { margin-top: 44px; }
@@ -3016,28 +3380,32 @@ body.work { background: var(--ink); }
 }
 
 /* NDA and Archive: the dark closing screen. The heading sits high — clear of the
-   fixed navbar — and four 3x3 bento blocks fill the rest, left-aligned with the
-   heading. Each block is tiled from three card types — large, wide and tall — so
-   the block still reads as one square; the strip pans continuously with the
-   wheel and a slim scrollbar at the foot tracks the position. The three vertical
-   gaps — header to heading, heading to cards, cards to the bottom edge — are all
-   equal. */
+   fixed navbar — and a two-row strip of project tiles fills the rest and pans
+   continuously with the wheel; a slim scrollbar at the foot tracks the position.
+   Tiles are 288x288 squares and 596x288 wides with 24px gaps and 24px corners;
+   JS fits the pair of rows into the space left under the heading (capped at the
+   design sizes) so the strip never overflows the panel. */
 .panel--nda {
-  --nda-gap: 16px;
-  --nda-gutter: max(40px, calc((100vw - 1280px) / 2));
-  --nda-gap-y: clamp(40px, 9vh, 100px);
-  --nda-gap-title: clamp(16px, 3vh, 36px);
+  --nda-gap: 24px;
+  --nda-size: 288px;
+  /* matches the footer content column (max-width 1280 + 40px side padding): the
+     strip's first and last rest positions line up with the footer edges */
+  --nda-gutter: max(40px, calc((100vw - 1280px) / 2 + 40px));
+  --nda-gap-y: clamp(16px, 3.4vh, 56px);
+  --nda-gap-title: 96px;
   --nda-nav-h: 8px;
   /* the rail sits level with the top edge of the fixed "Наверх" button */
   --to-top-bottom: 100px;
   --to-top-size: 44px;
   --nda-gap-bottom: calc(var(--to-top-bottom) + var(--to-top-size) - var(--nda-nav-h));
-  --nda-nav-gap: clamp(14px, 2.2vh, 28px);
+  --nda-nav-gap: 40px;
   --nda-header: 62px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-start;
+  /* centre the heading + strip + rail group, so the 40px gaps above and below
+     the cards are exact rather than padded out by leftover space */
+  justify-content: center;
   padding: calc(var(--nda-header) + var(--nda-gap-y)) 0 var(--nda-gap-bottom);
   overflow: hidden;
 }
@@ -3047,64 +3415,75 @@ body.work { background: var(--ink); }
   z-index: 4;
   flex: none;
   padding: 0 var(--nda-gutter);
-  text-align: center;
+  text-align: left;
+}
+
+/* the NDA heading wears the home-page section title type (.sec-title):
+   Inter, regular weight, large and open - but light on the dark panel */
+.panel--nda .nda-head .panel-link {
+  font-size: clamp(22px, 3.8vw, 72px);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.24;
 }
 
 .nda-viewport {
   position: relative;
   z-index: 2;
-  flex: 1;
+  /* hugs the strip so the gaps to the heading and to the rail below stay exact */
+  flex: none;
   width: 100%;
   min-height: 0;
   margin-top: var(--nda-gap-title);
   overflow: hidden;
 }
 
+/* The strip is two full-width rows of tiles that pan sideways together. Each row
+   is a flex line of fixed-size square (288) and wide (596) cards; the reference
+   order and the wide/square pattern live in the markup. */
 .nda-track {
   display: flex;
+  flex-direction: column;
   gap: var(--nda-gap);
-  height: 100%;
   padding-left: var(--nda-gutter);
+  padding-right: var(--nda-gutter);
   will-change: transform;
 }
 
-.nda-block {
-  flex: none;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+.nda-row {
+  display: flex;
   gap: var(--nda-gap);
-  /* a square 3x3 block; the strip sits left-aligned with the heading */
-  height: 100%;
-  aspect-ratio: 1 / 1;
 }
 
-/* Horizontal cards lead the block: each block is tiled from 2x1 landscapes and
-   single squares, arranged differently block to block. Every span is a whole
-   number of cells, so a wide card is always two singles plus the shared gap and
-   the block stays a perfect square. Cards are placed by auto-flow, so the span
-   class (and the order in the markup) define each block's pattern. */
 .nda-card {
+  position: relative;
+  display: block;
+  flex: none;
+  width: var(--nda-size);
+  height: var(--nda-size);
+  overflow: hidden;
   background: #ffffff;
-  border-radius: 22px;
+  border-radius: 24px;
 }
 
-.nda-card--wide { grid-column: span 2; }
+.nda-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  transition: transform .5s cubic-bezier(.22, .61, .36, 1);
+}
 
-/* The NDA tiles stand in for project covers: mostly white and pale cool tones,
-   a couple of neighbouring hues (soft green, soft violet) and a few darker
-   tiles (navy, near-black) that ground the strip. Kept desaturated so the whole
-   row still reads as one system rather than a colour jumble. */
-.nda-card--mist   { background: #E7EFFA; }
-.nda-card--sky    { background: #C6D8F1; }
-.nda-card--sage   { background: #D3E2D8; }
-.nda-card--violet { background: #BEB2E8; }
-.nda-card--azure  { background: #5E8CCB; }
-.nda-card--navy   { background: #2E4C7E; }
-.nda-card--ink    { background: #28282E; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05); }
+.nda-card:hover img {
+  transform: scale(1.05);
+}
+
+/* wide tile keeps the reference ratio (596 / 288) at any fitted square size */
+.nda-card--wide { width: calc(var(--nda-size) * 596 / 288); }
 
 /* Slim scrollbar under the cards: a grey rail with a shorter thumb that tracks
-   how far the bento strip has panned. */
+   how far the tile strip has panned. */
 .nda-scroll {
   position: relative;
   flex: none;
@@ -3181,9 +3560,10 @@ body.work { background: var(--ink); }
     0 0 54px #CECECE;
 }
 
-/* same glow on the fixed navbar copy, but only while BM (#bm) is on screen */
-.navbar.navbar--bm .nav .logo,
-.navbar.navbar--bm .menu a {
+/* same glow on the fixed navbar copy, but only while BM (#bm) is on screen and
+   only over a dark panel — on the light BM ground the copy is plain ink */
+.navbar.navbar--bm:not(.scrolled):not(.navbar--on-light) .nav .logo,
+.navbar.navbar--bm:not(.scrolled):not(.navbar--on-light) .menu a {
   text-shadow:
     0 0 3px #CECECE,
     0 0 8px #CECECE,
@@ -3195,6 +3575,14 @@ body.work { background: var(--ink); }
 .panel--light .panel-btn:hover { background: var(--ink); border-color: var(--ink); color: #ffffff; }
 .panel--light .panel-btn:focus-visible { outline-color: var(--ink); }
 .panel--light .panel-btn:active { background: rgba(0, 0, 0, .82); border-color: rgba(0, 0, 0, .82); color: #ffffff; }
+
+/* myexport carries its own video (the device sits on a dark platform at the
+   bottom), so its CTA stays a solid white pill over both the light scene and
+   the dark floor; on hover it flips to black */
+#myexport .panel-btn { background: #ffffff; border-color: #ffffff; color: var(--ink); }
+#myexport .panel-btn:hover { background: var(--ink); border-color: var(--ink); color: #ffffff; }
+#myexport .panel-btn:focus-visible { outline-color: var(--ink); }
+#myexport .panel-btn:active { background: rgba(0, 0, 0, .82); border-color: rgba(0, 0, 0, .82); color: #ffffff; }
 
 /* gosuslugi — Госуслуги: the copy is laid out on the screen of a centred Apple
    display. The monitor artwork carries the bezel and stand, so the text is
@@ -3382,20 +3770,23 @@ body.work { background: var(--ink); }
   to   { transform: scale(1.1); opacity: 0; }
 }
 
-/* The copy leaves as a block, each line lagging a touch behind the one above
-   (a small rubbery offset), sliding up over the top edge of the monitor. */
+/* The loader opens the intro on the blank screen. Once it settles, the copy
+   (logo, title and role) rises in as a block, each line lagging a touch behind
+   the one above, holds, then slides up over the top edge of the monitor before
+   the site assembles. */
+#gosuslugi.is-cycling .gs-loader { animation: gsLoaderShow 2.4s linear both; animation-delay: 0s; }
 #gosuslugi.is-cycling .gs-content > * {
-  animation: gsCopyUp .7s cubic-bezier(.34, 1.3, .64, 1) both;
-  animation-delay: 4s;
+  animation: gsCopyIntro 6.5s both;
 }
-#gosuslugi.is-cycling .gs-content > *:nth-child(1) { animation-delay: 4s; }
-#gosuslugi.is-cycling .gs-content > *:nth-child(2) { animation-delay: 4.06s; }
-#gosuslugi.is-cycling .gs-content > *:nth-child(3) { animation-delay: 4.12s; }
-#gosuslugi.is-cycling .gs-content > *:nth-child(4) { animation-delay: 4.12s; } /* locked to "Роль" */
-#gosuslugi.is-cycling .gs-loader { animation: gsLoaderShow 2.4s linear both; animation-delay: 4.8s; }
+#gosuslugi.is-cycling .gs-content > *:nth-child(1) { animation-delay: 2.4s; }
+#gosuslugi.is-cycling .gs-content > *:nth-child(2) { animation-delay: 2.46s; }
+#gosuslugi.is-cycling .gs-content > *:nth-child(3) { animation-delay: 2.52s; }
+#gosuslugi.is-cycling .gs-content > *:nth-child(4) { animation-delay: 2.52s; } /* locked to "Роль" */
 
-@keyframes gsCopyUp {
-  0%   { transform: none; opacity: 1; }
+@keyframes gsCopyIntro {
+  0%   { transform: translateY(70cqw); opacity: 0; animation-timing-function: cubic-bezier(.34, 1.3, .64, 1); }
+  11%  { transform: none; opacity: 1; animation-timing-function: linear; }
+  87.5% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.34, 1.3, .64, 1); }
   100% { transform: translateY(-70cqw); opacity: 0; }
 }
 
@@ -3428,7 +3819,7 @@ body.work { background: var(--ink); }
 
 #gosuslugi.is-cycling .gs-bg {
   animation: gsBgSlide .15s cubic-bezier(.22, 1, .36, 1) both;
-  animation-delay: calc(7.2s + var(--b) * .05s);
+  animation-delay: calc(9.2s + var(--b) * .05s);
 }
 
 @keyframes gsBgSlide {
@@ -3475,7 +3866,7 @@ body.work { background: var(--ink); }
 
 #gosuslugi.is-cycling .gs-skel {
   animation: gsSkelIn .3s ease both;
-  animation-delay: 7.4s;
+  animation-delay: 9.4s;
 }
 
 @keyframes gsSkelIn { from { opacity: 0; } to { opacity: 1; } }
@@ -3503,7 +3894,7 @@ body.work { background: var(--ink); }
 
 #gosuslugi.is-cycling .gs-part img {
   animation: gsFill .45s cubic-bezier(.22, 1, .36, 1) both;
-  animation-delay: calc(7.55s + var(--i) * .04s);
+  animation-delay: calc(9.55s + var(--i) * .04s);
 }
 
 @keyframes gsFill {
@@ -3520,9 +3911,8 @@ body.work { background: var(--ink); }
   }
 }
 
-/* After a pause the screen scrolls up and the copy scrolls back in from below,
-   each line lagging a touch behind the one above, returning to the opening
-   state — then the whole thing loops. */
+/* After a pause the assembled screen scrolls up and out; the intro then loops
+   straight back to the loader. */
 #gosuslugi.is-returning .gs-scene { overflow: hidden; }
 
 #gosuslugi.is-returning .gs-site,
@@ -3532,20 +3922,6 @@ body.work { background: var(--ink); }
 @keyframes gsSceneUp {
   from { transform: none; }
   to   { transform: translateY(-120%); }
-}
-
-#gosuslugi.is-returning .gs-content > * {
-  animation: gsCopyIn .7s cubic-bezier(.34, 1.3, .64, 1) both;
-  animation-delay: 1s;
-}
-#gosuslugi.is-returning .gs-content > *:nth-child(1) { animation-delay: 1s; }
-#gosuslugi.is-returning .gs-content > *:nth-child(2) { animation-delay: 1.05s; }
-#gosuslugi.is-returning .gs-content > *:nth-child(3) { animation-delay: 1.1s; }
-#gosuslugi.is-returning .gs-content > *:nth-child(4) { animation-delay: 1.1s; } /* locked to "Роль" */
-
-@keyframes gsCopyIn {
-  0%   { transform: translateY(70cqw); opacity: 0; }
-  100% { transform: none; opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3584,10 +3960,9 @@ body.work { background: var(--ink); }
   padding: 7px 7px 7px 26px;
   border: 1px solid #ffffff;
   border-radius: 999px;
-  font-size: .78rem;
-  font-weight: 600;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .02em;
   color: #ffffff;
   background: transparent;
   transition: background .3s ease, color .3s ease, border-color .3s ease;
@@ -3745,6 +4120,11 @@ body.work { background: var(--ink); }
   background: rgba(26, 26, 26, .9);
   border-color: rgba(255, 255, 255, .55);
 }
+
+/* myexport's video keeps a dark floor under the button — white outline there */
+.to-top--myexport { color: #ffffff; }
+.to-top--myexport:hover { background: #ffffff; }
+.to-top--myexport:hover svg path { stroke: #1a1a1a; }
 
 /* Hidden on the first panel — there is nowhere to scroll up to */
 .to-top--hidden { display: none; }

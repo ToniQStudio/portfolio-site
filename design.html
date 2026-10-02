@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=49">
+<link rel="stylesheet" href="assets/css/style.css?v=76">
 <script>/* deep link: keep the page hidden until main.js jumps to the linked panel,
    so the top panel never flashes before the anchor settles */
 if(/^#p\d+$/.test(location.hash)){document.documentElement.classList.add('work-init');}
@@ -27,12 +27,14 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 <header class="navbar" id="navbar">
 	<nav class="nav">
 		<a class="logo" href="index.html">Антон Миньков</a>
+		<a class="logo-alt" href="switch-off-css.html">Switch Off CSS</a>
 		<div class="menu">
 			<a href="design.html">Дизайн</a>
 			<a href="management.html">Менеджмент</a>
-			<a href="kontakty.html">Контакты</a>
+			<a href="kontakty.html">О себе</a>
 			<a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>
 		</div>
+		<a class="nav-cta" href="kontakty.html"><span>Обсудить проект</span><span class="nav-cta-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span></a>
 	</nav>
 	<button class="hamburger" id="hamburger" aria-label="Меню"><span></span></button>
 </header>
@@ -40,13 +42,13 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 <div class="overlay">
 	<a href="design.html">Дизайн</a>
 	<a href="management.html">Менеджмент</a>
-	<a href="kontakty.html">Контакты</a>
+	<a href="kontakty.html">О себе</a>
 	<a href="toniq-studio.html">ToniQ Studio</a>
 </div>
 
 <main class="snap" id="snap">
 
-	<section class="panel panel--intro" id="intro" style="--bg:#1A1A1A" aria-labelledby="t00">
+	<section class="panel panel--intro" id="intro" style="--bg:#000005" aria-labelledby="t00">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<div class="panel-inner">
 			<h2 class="panel-intro" id="t00">Design</h2>
@@ -171,7 +173,7 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 				<span class="gs-stand-medallion" aria-hidden="true"></span>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-2" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-2)"/></svg></a>
 	</section>
 
 	<section class="panel" id="sfera" style="--bg:#531bfc" aria-labelledby="t02">
@@ -188,16 +190,16 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-3" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-3)"/></svg></a>
 	</section>
 
-	<section class="panel panel--butik" id="butik" style="--bg:#1a1a1a; --g1:#1a1a1a" aria-labelledby="t03">
+	<section class="panel panel--butik" id="butik" style="--bg:#000005; --g1:#000005" aria-labelledby="t03">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<img class="butik-mark" src="assets/logos/butik.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">
 		<div class="panel-inner">
 			<div class="butik-content">
 				<div class="panel-text">
-					<h2 class="panel-title" id="t03">Фиджитал-универмаг<br>и&nbsp;экосистема цифровых продуктов</h2>
+					<h2 class="panel-title" id="t03">Фиджитал-универмаг и&nbsp;экосистема цифровых продуктов.<br>Топ-10 E-commerce в России 2019</h2>
 					<p class="panel-role-label">Роль</p>
 					<p class="panel-role">Руководитель направления дизайна</p>
 				</div>
@@ -207,7 +209,7 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 				</div>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-4" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-4)"/></svg></a>
 	</section>
 
 	<section class="panel" id="expertme" style="--bg:#211D85; --g1:#211D85" aria-labelledby="t04">
@@ -219,12 +221,12 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo panel-logo--color"><img src="assets/logos/expertme-wordmark-white.png" alt="ExpertMe" style="height:48px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t04">Уникальная цифровая B2B‑платформа и&nbsp;ИТ‑экосистема, созданная для&nbsp;эффективного управления персоналом, развития карьеры и&nbsp;привлечения внешних экспертов под&nbsp;конкретные проектные задачи бизнеса</h2>
+				<h2 class="panel-title" id="t04">Уникальная цифровая B2B-платформа и&nbsp;экосистема для&nbsp;эффективного управления персоналом, развития карьеры и&nbsp;привлечения внешних экспертов под&nbsp;задачи бизнеса</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-5" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-5)"/></svg></a>
 	</section>
 
 	<section class="panel" id="rosatom" style="--bg:url('../img/bg/videowall.webp?v=4') center / cover no-repeat; --g1:#1a1a1a" aria-labelledby="t07">
@@ -232,29 +234,29 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo"><img src="assets/logos/rosatom.svg" alt="Росэнергоатом" style="height:96px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t07">Система объективного<br>контроля процессов<br>и&nbsp;мониторинга параметров<br>для&nbsp;Центрального<br>диспетчерского щита<br>в&nbsp;кризисном центре</h2>
+				<h2 class="panel-title" id="t07">Система объективного контроля процессов и&nbsp;мониторинга параметров для&nbsp;Центрального диспетчерского щита в&nbsp;кризисном центре</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Ведущий продуктовый дизайнер</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-6" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-6)"/></svg></a>
 	</section>
 
 	<section class="panel panel--light" id="myexport" style="--bg:#FFFFFF" aria-labelledby="t06">
 		<span class="panel-bg" aria-hidden="true">
-			<video class="panel-video" poster="assets/video/myexport-poster.webp?v=2" muted playsinline preload="none" disablepictureinpicture disableremoteplayback>
-				<source data-src="assets/video/myexport-panel.webm?v=2" type="video/webm">
+			<video class="panel-video" poster="assets/video/myexport-poster.webp?v=3" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback>
+				<source data-src="assets/video/myexport-panel.webm?v=3" type="video/webm">
 			</video>
 		</span>
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo"><img src="assets/logos/myexport.svg" alt="Мой экспорт" style="height:107px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t06">Единый государственный<br>онлайн-портал для&nbsp;бизнеса,<br>помогающий российским<br>компаниям продавать товары<br>и&nbsp;услуги за&nbsp;рубеж</h2>
+				<h2 class="panel-title" id="t06">Единый государственный онлайн-портал, помогающий российским компаниям продавать товары и&nbsp;услуги за&nbsp;рубеж</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-7" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-7)"/></svg></a>
 	</section>
 
 	<section class="panel" id="inexpay" style="--bg:#1A1A1A" aria-labelledby="t05">
@@ -266,12 +268,12 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo panel-logo--color"><img src="assets/logos/inexpay-pay-white.png" alt="InexPay" style="height:48px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t05">Мобильное приложение — финтех-платформа с&nbsp;интуитивным интерфейсом для&nbsp;международных переводов, быстрой и&nbsp;безопасной отправки денег по&nbsp;всему миру</h2>
+				<h2 class="panel-title" id="t05">Мобильное приложение с&nbsp;интуитивно понятным интерфейсом для&nbsp;трансграничных переводов, быстрой и&nbsp;безопасной отправки денег по&nbsp;всему миру для&nbsp;международной финтех-платформы</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Руководитель группы продуктового дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-8" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-8)"/></svg></a>
 	</section>
 
 	<section class="panel panel--light" id="skillstech" style="--bg:#e8edf1; --g1:#e8edf1" aria-labelledby="t12">
@@ -283,12 +285,12 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 		<div class="panel-inner">
 			<div class="panel-text">
 				<span class="panel-logo"><img src="assets/logos/st-dark.svg" alt="СкиллсТек" style="height:48px" loading="lazy" decoding="async"></span>
-				<h2 class="panel-title" id="t12">Цифровые продукты для&nbsp;ИТ‑платформы для&nbsp;управления персоналом</h2>
+				<h2 class="panel-title" id="t12">ИТ-система для&nbsp;навыкоцентричного управления персоналом, использующая агентный ИИ и&nbsp;HR-методологии для&nbsp;автоматического сбора данных о&nbsp;сотрудниках и&nbsp;создания их&nbsp;цифровых двойников</h2>
 				<p class="panel-role-label">Роль</p>
 				<p class="panel-role">Руководитель направления дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-9" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-9)"/></svg></a>
 	</section>
 
 	<section class="panel panel--light" id="bm" style="--bg:#CECECE" aria-labelledby="t10">
@@ -305,47 +307,43 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 				<p class="panel-role">Руководитель направления дизайна</p>
 			</div>
 		</div>
-		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+		<a class="panel-btn" href="#"><span>Смотреть проект</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-10" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-10)"/></svg></a>
 	</section>
 
 	<section class="panel panel--nda" id="nda" style="--bg:#1A1A1A; --g1:#1A1A1A" aria-labelledby="t17">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<div class="nda-head">
-			<h2 class="panel-link" id="t17">NDA и&nbsp;Архив</h2>
+			<h2 class="panel-link" id="t17">NDA и&nbsp;архив</h2>
 		</div>
 		<div class="nda-viewport" aria-hidden="true">
 			<div class="nda-track" id="ndaTrack">
-				<div class="nda-block">
-					<span class="nda-card nda-card--wide"></span>
-					<span class="nda-card nda-card--sky"></span>
-					<span class="nda-card nda-card--mist"></span>
-					<span class="nda-card nda-card--wide nda-card--sage"></span>
-					<span class="nda-card nda-card--wide"></span>
-					<span class="nda-card nda-card--azure"></span>
+				<div class="nda-row">
+					<span class="nda-card nda-card--wide"><img src="assets/cards/01.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/18.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/17.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/02.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/03.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/24.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/19.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/06.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/08.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/21.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/23.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/05.webp" alt="" loading="lazy" decoding="async"></span>
 				</div>
-				<div class="nda-block">
-					<span class="nda-card nda-card--wide nda-card--mist"></span>
-					<span class="nda-card nda-card--azure"></span>
-					<span class="nda-card nda-card--wide"></span>
-					<span class="nda-card nda-card--sky"></span>
-					<span class="nda-card nda-card--navy"></span>
-					<span class="nda-card nda-card--wide"></span>
-				</div>
-				<div class="nda-block">
-					<span class="nda-card"></span>
-					<span class="nda-card nda-card--wide nda-card--sky"></span>
-					<span class="nda-card nda-card--wide"></span>
-					<span class="nda-card nda-card--violet"></span>
-					<span class="nda-card nda-card--ink"></span>
-					<span class="nda-card nda-card--wide nda-card--azure"></span>
-				</div>
-				<div class="nda-block">
-					<span class="nda-card nda-card--sage"></span>
-					<span class="nda-card nda-card--wide"></span>
-					<span class="nda-card nda-card--navy"></span>
-					<span class="nda-card nda-card--wide nda-card--mist"></span>
-					<span class="nda-card nda-card--wide"></span>
-					<span class="nda-card nda-card--sky"></span>
+				<div class="nda-row">
+					<span class="nda-card"><img src="assets/cards/12.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/11.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/04.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/20.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/09.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/10.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/13.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/07.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/14.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/22.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card"><img src="assets/cards/15.webp" alt="" loading="lazy" decoding="async"></span>
+					<span class="nda-card nda-card--wide"><img src="assets/cards/16.webp" alt="" loading="lazy" decoding="async"></span>
 				</div>
 			</div>
 		</div>
@@ -362,12 +360,13 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 				<div class="sfooter-brand">
 					<a class="sfooter-name" href="index.html">Антон Миньков</a>
 					<p class="sfooter-role">Руководитель группы продуктового дизайна</p>
+					<a class="nav-cta sfooter-cta" href="kontakty.html"><span>Обсудить проект</span><span class="nav-cta-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span></a>
 				</div>
 				<nav class="sfooter-nav" aria-label="Разделы сайта">
 					<ul>
 						<li><a href="design.html" aria-current="page">Дизайн</a></li>
 						<li><a href="management.html">Менеджмент</a></li>
-						<li><a href="kontakty.html">Контакты</a></li>
+						<li><a href="kontakty.html">О себе</a></li>
 						<li><a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a></li>
 					</ul>
 				</nav>
@@ -382,8 +381,8 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 				</div>
 			</div>
 			<div class="sfooter-bottom">
-				<p class="sfooter-copy">© <span class="sfooter-year">2026</span> Антон Миньков</p>
-				<p class="sfooter-tagline">Решаю задачи бизнеса через эффективный пользовательский опыт</p>
+				<p class="sfooter-copy">© <span class="sfooter-year">2026</span> ToniQ Studio</p>
+				<p class="sfooter-tagline">Решаю задачи бизнеса, создавая эффективный пользовательский опыт</p>
 			</div>
 		</div>
 	</footer>
@@ -408,6 +407,6 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 	<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=32"></script>
+<script src="assets/js/main.js?v=45"></script>
 </body>
 </html>

@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=49">
+<link rel="stylesheet" href="assets/css/style.css?v=76">
 </head>
-<body>
+<body class="home">
 
 <svg class="key-defs" aria-hidden="true" focusable="false" width="0" height="0">
 	<mask id="btn-arrow-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
@@ -23,12 +23,14 @@
 <header class="navbar" id="navbar">
 	<nav class="nav">
 		<a class="logo" href="index.html">Антон Миньков</a>
+		<a class="logo-alt" href="switch-off-css.html">Switch Off CSS</a>
 		<div class="menu">
 			<a href="design.html">Дизайн</a>
 			<a href="management.html">Менеджмент</a>
-			<a href="kontakty.html">Контакты</a>
+			<a href="kontakty.html">О себе</a>
 			<a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>
 		</div>
+		<a class="nav-cta" href="kontakty.html"><span>Обсудить проект</span><span class="nav-cta-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span></a>
 	</nav>
 	<button class="hamburger" id="hamburger" aria-label="Меню"><span></span></button>
 </header>
@@ -36,55 +38,72 @@
 <div class="overlay">
 	<a href="design.html">Дизайн</a>
 	<a href="management.html">Менеджмент</a>
-	<a href="kontakty.html">Контакты</a>
+	<a href="kontakty.html">О себе</a>
 	<a href="toniq-studio.html">ToniQ Studio</a>
 </div>
 
 <main>
 	<section class="hero" id="top">
-		<canvas id="heroCanvas" aria-hidden="true"></canvas>
-		<div class="fallback-bg" aria-hidden="true"></div>
-		<div class="hero-veil" aria-hidden="true"></div>
+		<div class="hero-bg" aria-hidden="true">
+			<svg class="hero-liquid-fallback" id="heroLiquidLogo" viewBox="0 0 1694 426" preserveAspectRatio="xMidYMid meet">
+				<path d="M59.6591 422.42H0L67.2159 218.784H142.784L210 422.42H150.341L105.795 274.864H104.205L59.6591 422.42ZM48.5227 342.08H160.682V383.443H48.5227V342.08Z"/>
+				<path d="M214.813 422.42V218.784H270.097V298.33H343.279V218.784H398.563V422.42H343.279V342.875H270.097V422.42H214.813Z"/>
+				<path d="M407.445 263.33V218.784H579.433V263.33H518.183V422.42H463.695V263.33H407.445Z"/>
+				<path d="M771.142 320.602C771.142 343.273 766.734 362.397 757.917 377.974C749.101 393.486 737.202 405.252 722.221 413.273C707.24 421.227 690.536 425.205 672.108 425.205C653.547 425.205 636.776 421.194 621.795 413.173C606.881 405.086 595.015 393.287 586.199 377.776C577.449 362.198 573.074 343.14 573.074 320.602C573.074 297.932 577.449 278.841 586.199 263.33C595.015 247.752 606.881 235.986 621.795 228.031C636.776 220.01 653.547 216 672.108 216C690.536 216 707.24 220.01 722.221 228.031C737.202 235.986 749.101 247.752 757.917 263.33C766.734 278.841 771.142 297.932 771.142 320.602ZM714.267 320.602C714.267 308.405 712.643 298.131 709.395 289.778C706.213 281.36 701.473 274.996 695.176 270.688C688.945 266.312 681.256 264.125 672.108 264.125C662.96 264.125 655.237 266.312 648.94 270.688C642.709 274.996 637.969 281.36 634.721 289.778C631.54 298.131 629.949 308.405 629.949 320.602C629.949 332.799 631.54 343.107 634.721 351.526C637.969 359.878 642.709 366.241 648.94 370.616C655.237 374.925 662.96 377.08 672.108 377.08C681.256 377.08 688.945 374.925 695.176 370.616C701.473 366.241 706.213 359.878 709.395 351.526C712.643 343.107 714.267 332.799 714.267 320.602Z"/>
+				<path d="M779.921 422.42V218.784H835.205V298.33H908.387V218.784H963.671V422.42H908.387V342.875H835.205V422.42H779.921Z"/>
+				<path d="M344.791 2.78409H413.598L460.927 118.125H463.314L510.643 2.78409H579.45V206.42H525.359V88.6932H523.768L478.427 204.83H445.814L400.473 87.8977H398.882V206.42H344.791V2.78409Z"/>
+				<path d="M591.65 2.78409H646.934V109.375H648.525L720.912 2.78409H767.844V206.42H712.559V99.4318H711.366L637.787 206.42H591.65V2.78409Z"/>
+				<path d="M779.994 206.42V2.78409H835.278V82.3295H908.46V2.78409H963.744V206.42H908.46V126.875H835.278V206.42H779.994Z"/>
+				<path d="M1010.99 71.1932H1053.15C1070.32 71.1932 1085.3 73.9441 1098.1 79.446C1110.96 84.9479 1120.93 92.7036 1128.03 102.713C1135.18 112.723 1138.73 124.489 1138.66 138.011C1138.73 151.534 1135.18 163.433 1128.03 173.707C1120.93 183.982 1110.96 192.003 1098.1 197.77C1085.3 203.537 1070.32 206.42 1053.15 206.42H977.187V2.78409H1032.47V163.068H1053.15C1059.85 163.068 1065.45 161.974 1069.96 159.787C1074.53 157.599 1077.98 154.583 1080.3 150.739C1082.68 146.894 1083.84 142.519 1083.78 137.614C1083.84 130.653 1081.26 124.886 1076.02 120.313C1070.79 115.672 1063.16 113.352 1053.15 113.352H1010.99V71.1932Z"/>
+				<path d="M1272.62 206.42L1210.17 124.091H1202.42V206.42H1147.13V2.78409H1202.42V79.5455H1209.58L1268.04 2.78409H1337.65L1260.09 100.625L1342.02 206.42H1272.62Z"/>
+				<path d="M1514.28 104.602C1514.28 127.273 1509.87 146.397 1501.06 161.974C1492.24 177.486 1480.34 189.252 1465.36 197.273C1450.38 205.227 1433.68 209.205 1415.25 209.205C1396.69 209.205 1379.92 205.194 1364.94 197.173C1350.02 189.086 1338.16 177.287 1329.34 161.776C1320.59 146.198 1316.21 127.14 1316.21 104.602C1316.21 81.9318 1320.59 62.8409 1329.34 47.3296C1338.16 31.7519 1350.02 19.9858 1364.94 12.0312C1379.92 4.01042 1396.69 0 1415.25 0C1433.68 0 1450.38 4.01042 1465.36 12.0312C1480.34 19.9858 1492.24 31.7519 1501.06 47.3296C1509.87 62.8409 1514.28 81.9318 1514.28 104.602ZM1457.41 104.602C1457.41 92.4053 1455.78 82.1307 1452.54 73.7784C1449.35 65.3599 1444.61 58.9962 1438.32 54.6875C1432.09 50.3125 1424.4 48.125 1415.25 48.125C1406.1 48.125 1398.38 50.3125 1392.08 54.6875C1385.85 58.9962 1381.11 65.3599 1377.86 73.7784C1374.68 82.1307 1373.09 92.4053 1373.09 104.602C1373.09 116.799 1374.68 127.107 1377.86 135.526C1381.11 143.878 1385.85 150.241 1392.08 154.616C1398.38 158.925 1406.1 161.08 1415.25 161.08C1424.4 161.08 1432.09 158.925 1438.32 154.616C1444.61 150.241 1449.35 143.878 1452.54 135.526C1455.78 127.107 1457.41 116.799 1457.41 104.602Z"/>
+				<path d="M1525.86 206.42V2.78409H1614.16C1629.67 2.78409 1642.69 4.87216 1653.23 9.0483C1663.84 13.2244 1671.83 19.1241 1677.2 26.7472C1682.63 34.3703 1685.35 43.3523 1685.35 53.6932C1685.35 61.1837 1683.69 68.0114 1680.38 74.1761C1677.13 80.3409 1672.56 85.5114 1666.66 89.6875C1660.76 93.7974 1653.86 96.6477 1645.97 98.2386V100.227C1654.72 100.559 1662.68 102.779 1669.84 106.889C1677 110.933 1682.7 116.534 1686.94 123.693C1691.18 130.786 1693.3 139.138 1693.3 148.75C1693.3 159.886 1690.39 169.796 1684.55 178.48C1678.79 187.164 1670.57 193.991 1659.9 198.963C1649.22 203.935 1636.5 206.42 1621.71 206.42H1525.86ZM1581.15 162.273H1607C1616.28 162.273 1623.24 160.549 1627.88 157.102C1632.52 153.589 1634.84 148.419 1634.84 141.591C1634.84 136.818 1633.74 132.775 1631.56 129.46C1629.37 126.146 1626.25 123.627 1622.21 121.903C1618.23 120.18 1613.43 119.318 1607.79 119.318H1581.15V162.273ZM1581.15 85.1136H1603.82C1608.65 85.1136 1612.93 84.3513 1616.64 82.8267C1620.35 81.3021 1623.24 79.1146 1625.29 76.2642C1627.41 73.3475 1628.47 69.8011 1628.47 65.625C1628.47 59.3276 1626.22 54.5218 1621.71 51.2074C1617.21 47.8267 1611.51 46.1364 1604.61 46.1364H1581.15V85.1136Z"/>
+			</svg>
+			<canvas id="heroLiquid" aria-hidden="true"></canvas>
+		</div>
 
-		<div class="hero-inner">
-			<p class="hero-topline">Руководитель группы продуктового дизайна</p>
+		<h1 class="sr-only">Антон Миньков</h1>
 
-			<div class="hero-name-wrap">
-				<span class="hero-name">Антон Миньков</span>
-			</div>
+		<p class="hero-lead">
+			<span class="hero-lead-big">Руковожу продуктовыми дизайнерами</span>
+			<span class="hero-lead-big">Создаю работающий UX/UI сложных сервисов</span>
+			<span class="hero-lead-big">Решаю задачи бизнеса. <a class="hero-lead-link" href="kontakty.html">Обсудить проект</a></span>
+		</p>
 
-			<p class="hero-role">Решаю задачи бизнеса через эффективный пользовательский опыт</p>
-
+		<div class="hero-bottom">
 			<p class="hero-prev">
-				<a href="https://rtlabs.ru/" target="_blank" rel="noopener">РТЛабс (Госуслуги)</a><span class="hero-prev-sep" aria-hidden="true"></span><a href="https://www.vtb.ru/" target="_blank" rel="noopener">ВТБ</a><span class="hero-prev-sep" aria-hidden="true"></span><a href="https://inno.tech/" target="_blank" rel="noopener">T1 Иннотех</a><span class="hero-prev-sep" aria-hidden="true"></span><a href="https://ibs.ru/" target="_blank" rel="noopener">IBS</a>
+				<a href="https://rtlabs.ru/" target="_blank" rel="noopener">РТЛабс Госуслуги</a><span class="hero-prev-sep" aria-hidden="true"></span><a href="https://www.vtb.ru/" target="_blank" rel="noopener">ВТБ</a><span class="hero-prev-sep" aria-hidden="true"></span><a href="https://inno.tech/" target="_blank" rel="noopener">T1 Иннотех</a><span class="hero-prev-sep" aria-hidden="true"></span><a href="https://ibs.ru/" target="_blank" rel="noopener">IBS</a>
 			</p>
-		</div>
 
-		<div class="hero-contacts">
-			<a class="contact-link" href="mailto:minkov.work@gmail.com">minkov.work@gmail.com</a>
-			<span class="contact-sep" aria-hidden="true"></span>
-			<a class="contact-link contact-link--tg" href="https://t.me/tony_newton" target="_blank" rel="noopener">
-				<span>тг. @tony_newton</span>
-				<span class="contact-qr" aria-hidden="true">
-					<img src="assets/img/telegram-qr.svg" alt="" width="148" height="148">
-				</span>
+			<a class="hero-scroll" href="#xi-title" aria-label="Вниз">
+				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
 			</a>
-		</div>
 
-		<a class="hero-scroll" href="#expertise" aria-label="Вниз">
-			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
-		</a>
+			<div class="hero-contacts">
+				<a class="contact-link" href="mailto:minkov.work@gmail.com">minkov.work@gmail.com</a>
+				<span class="contact-sep" aria-hidden="true"></span>
+				<a class="contact-link contact-link--tg" href="https://t.me/tony_newton" target="_blank" rel="noopener">
+					<span>тг. @tony_newton</span>
+					<span class="contact-qr" aria-hidden="true">
+						<img src="assets/img/telegram-qr.svg" alt="" width="148" height="148">
+					</span>
+				</a>
+			</div>
+		</div>
 	</section>
 
 	<section class="expertise" id="expertise">
+		<div class="seam" aria-hidden="true">
+			<canvas class="seam-crosses" id="seamCrosses"></canvas>
+			<span class="seam-veil"></span>
+			<span class="seam-line"></span>
+			<span class="seam-glint"><i></i></span>
+		</div>
+
 		<div class="container">
 			<section class="xi" aria-labelledby="xi-title">
 				<div class="xi-head reveal">
-					<p class="xi-kicker">Что я делаю</p>
-					<h2 class="xi-title" id="xi-title">
-						<span>Проектирую цифровые продукты и&nbsp;экосистемы</span>
-						<span>Руковожу дизайн-командами</span>
-					</h2>
+					<h2 class="xi-title sec-title" id="xi-title">Ключевые экспертизы</h2>
 				</div>
 
 				<ol class="xi-list">
@@ -155,8 +174,7 @@
 	<section class="pcards" id="cases">
 		<div class="container">
 			<div class="ex-head reveal">
-				<p class="ex-kicker">Избранные</p>
-				<h2 class="ex-title">Проекты</h2>
+				<h2 class="ex-title sec-title">Избранные проекты</h2>
 			</div>
 
 			<div class="pcards-grid">
@@ -273,7 +291,7 @@
 			</div>
 
 			<div class="ex-all-wrap reveal">
-				<a class="ex-all" href="design.html"><span>Другие проекты</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#btn-arrow-mask)"/></svg></a>
+				<a class="ex-all" href="design.html"><span>Другие проекты</span><svg class="btn-arrow" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><mask id="ba-fly-1" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect x="0" y="0" width="32" height="32" fill="#fff"/><path class="fly-out" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="fly-in" d="M10.5 16H21M16.5 10.5L22 16l-5.5 5.5" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></mask></defs><circle cx="16" cy="16" r="16" fill="currentColor" mask="url(#ba-fly-1)"/></svg></a>
 			</div>
 		</div>
 	</section>
@@ -286,12 +304,13 @@
 				<div class="sfooter-brand">
 					<a class="sfooter-name" href="index.html">Антон Миньков</a>
 					<p class="sfooter-role">Руководитель группы продуктового дизайна</p>
+					<a class="nav-cta sfooter-cta" href="kontakty.html"><span>Обсудить проект</span><span class="nav-cta-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg><svg viewBox="0 0 24 24" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span></a>
 				</div>
 				<nav class="sfooter-nav" aria-label="Разделы сайта">
 					<ul>
 						<li><a href="design.html">Дизайн</a></li>
 						<li><a href="management.html">Менеджмент</a></li>
-						<li><a href="kontakty.html">Контакты</a></li>
+						<li><a href="kontakty.html">О себе</a></li>
 						<li><a class="toniq-link" href="toniq-studio.html"><span class="toniq-text">ToniQ Studio</span><span class="toniq-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a></li>
 					</ul>
 				</nav>
@@ -306,14 +325,15 @@
 				</div>
 			</div>
 			<div class="sfooter-bottom">
-				<p class="sfooter-copy">© <span class="sfooter-year">2026</span> Антон Миньков</p>
-				<p class="sfooter-tagline">Решаю задачи бизнеса через эффективный пользовательский опыт</p>
+				<p class="sfooter-copy">© <span class="sfooter-year">2026</span> ToniQ Studio</p>
+				<p class="sfooter-tagline">Решаю задачи бизнеса, создавая эффективный пользовательский опыт</p>
 			</div>
 		</div>
 	</footer>
 
 
-<script src="assets/js/aurora.js?v=3"></script>
-<script src="assets/js/main.js?v=32"></script>
+<script src="assets/js/hero-liquid.js?v=2"></script>
+<script src="assets/js/seam-crosses.js?v=4"></script>
+<script src="assets/js/main.js?v=45"></script>
 </body>
 </html>

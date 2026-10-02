@@ -1,45 +1,116 @@
 (() => {
   'use strict';
 
-  // Header scroll state
+  // Header: transparent over the home hero and the design intro; the edge-to-edge
+  // frosted bar everywhere else, and on the home page once the hero is passed.
+  // On the design deck the active panel drives it (see setActive below).
   const navbar = document.getElementById('navbar');
-  const isWorkPage = document.documentElement.classList.contains('work');
-  const onScroll = () => {
-    if (!isWorkPage && window.scrollY > 40) navbar.classList.add('scrolled');
-    else navbar.classList.remove('scrolled');
-  };
-  onScroll();
-  addEventListener('scroll', onScroll, { passive: true });
+  if (navbar) {
+    const isHome = document.body.classList.contains('home');
+    const isWork = document.documentElement.classList.contains('work');
+    const heroEl = document.querySelector('.hero');
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // null = this page has no frosted-bar state (the design deck)
+    const barWanted = () => {
+      if (isHome) {
+        const h = heroEl ? heroEl.offsetHeight : window.innerHeight;
+        return window.scrollY > Math.max(0, h - 64);
+      }
+      if (!isWork) return window.scrollY > 40;
+      return null;
+    };
+    let navOutTimer = 0;
+    const finishHide = () => {
+      clearTimeout(navOutTimer);
+      navbar.classList.remove('nav-out');
+      navbar.classList.remove('scrolled');
+    };
+    const onScroll = () => {
+      const on = barWanted();
+      if (on === null) return;
+      if (on) {
+        clearTimeout(navOutTimer);
+        navbar.classList.remove('nav-out');
+        navbar.classList.add('scrolled');
+        return;
+      }
+      if (navbar.classList.contains('nav-out')) return; // hide animation in flight
+      // On the home page the bar leaves the viewport on its own (the header is
+      // absolute there), so play an explicit slide-out first; elsewhere the
+      // ::before transition already animates the bar away.
+      if (isHome && !reduceMotion && navbar.classList.contains('scrolled')) {
+        navbar.classList.add('nav-out');
+        clearTimeout(navOutTimer);
+        // safety net in case animationend never arrives
+        navOutTimer = setTimeout(() => {
+          if (navbar.classList.contains('nav-out')) finishHide();
+        }, 500);
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    };
+    navbar.addEventListener('animationend', (e) => {
+      if (e.animationName !== 'navUp' || !navbar.classList.contains('nav-out')) return;
+      finishHide();
+    });
+    onScroll();
+    addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // Hero -> content seam: the glint rides the arc with the scroll — when the
+  // arc sits low on screen it is at the left edge, as the seam climbs it
+  // slides over the apex to the right edge. --glint (0..1) is driven by the
+  // apex's position in the viewport, frame-throttled.
+  const seamBlock = document.querySelector('.seam');
+  if (seamBlock && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let seamRaf = 0;
+    let seamApex = 0;
+    let vh = 1;
+    const measureSeam = () => {
+      vh = window.innerHeight || 1;
+      const r = seamBlock.getBoundingClientRect();
+      const cs = getComputedStyle(seamBlock);
+      const arcRise = (parseFloat(cs.getPropertyValue('--arc-rise')) || 0) * window.innerWidth / 100;
+      const drop = parseFloat(cs.getPropertyValue('--drop')) || 0;
+      seamApex = r.top + window.scrollY + r.height / 2 + drop / 2 - arcRise;
+    };
+    const updateSeam = () => {
+      seamRaf = 0;
+      const p = Math.min(1, Math.max(0, (vh - (seamApex - window.scrollY)) / vh));
+      seamBlock.style.setProperty('--glint', p.toFixed(4));
+    };
+    const onSeamScroll = () => { if (!seamRaf) seamRaf = requestAnimationFrame(updateSeam); };
+    measureSeam();
+    updateSeam();
+    addEventListener('scroll', onSeamScroll, { passive: true });
+    addEventListener('resize', () => { measureSeam(); updateSeam(); }, { passive: true });
+  }
 
   // Footer copyright: stamp the current year so the markup never goes stale
   const yearEl = document.querySelector('.sfooter-year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  // Footer: line the menu column up with the tagline below it (its exact left
+  // edge), instead of the fixed offset that drifts with the viewport/fonts.
+  const footerNav = document.querySelector('.sfooter-nav');
+  const footerTagline = document.querySelector('.sfooter-tagline');
+  if (footerNav && footerTagline) {
+    const alignFooterNav = () => {
+      if (window.innerWidth < 1201) { footerNav.style.left = ''; return; }
+      footerNav.style.left = '0px';
+      const delta = footerTagline.getBoundingClientRect().left - footerNav.getBoundingClientRect().left;
+      footerNav.style.left = delta.toFixed(1) + 'px';
+    };
+    alignFooterNav();
+    addEventListener('resize', alignFooterNav);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignFooterNav);
+  }
 
   // Expertise index hover: mirror each title's words into data-text so the CSS
   // ramp copy can wipe in over them.
   document.querySelectorAll('.xi-fill').forEach((el) => {
     el.setAttribute('data-text', el.textContent);
   });
-
-  // Fit the top line width to the name width
-  const heroName = document.querySelector('.hero-name');
-  const heroTopline = document.querySelector('.hero-topline');
-  if (heroName && heroTopline) {
-    const fitTopline = () => {
-      const nameW = heroName.getBoundingClientRect().width;
-      heroTopline.style.fontSize = '16px';
-      const baseW = heroTopline.getBoundingClientRect().width;
-      if (nameW > 0 && baseW > 0) {
-        // fit to the name width, but capped so enlarging the name no longer
-        // inflates this line (on narrow screens it still shrinks to fit)
-        const size = Math.min(16 * nameW / baseW, 15);
-        heroTopline.style.fontSize = size.toFixed(2) + 'px';
-      }
-    };
-    fitTopline();
-    addEventListener('resize', fitTopline);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTopline);
-  }
 
   // Butik (#butik): the copy column — and the CRT film below it — take the width
   // of the title's own longest line, and the whole group is centred on the page.
@@ -58,6 +129,28 @@
       addEventListener('resize', fitButik);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitButik);
     }
+  }
+
+  // Hero lead: keep the statement on three lines at every screen width by
+  // scaling the type so its longest line exactly fills the content column
+  // (viewport minus the --edge gutters).
+  const heroLeadEl = document.querySelector('.hero-lead');
+  if (heroLeadEl) {
+    const leadLines = Array.from(heroLeadEl.querySelectorAll('.hero-lead-big'));
+    const fitHeroLead = () => {
+      const cs = getComputedStyle(heroLeadEl);
+      const avail = heroLeadEl.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+      if (avail <= 0 || !leadLines.length) return;
+      const REF = 100;
+      heroLeadEl.style.setProperty('--hero-lead-fs', REF + 'px');
+      let maxW = 0;
+      leadLines.forEach((el) => { maxW = Math.max(maxW, el.getBoundingClientRect().width); });
+      if (maxW <= 0) return;
+      heroLeadEl.style.setProperty('--hero-lead-fs', (avail * REF / maxW).toFixed(2) + 'px');
+    };
+    fitHeroLead();
+    addEventListener('resize', fitHeroLead);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeroLead);
   }
 
   // Pause background videos for reduced motion
@@ -312,9 +405,9 @@
     // up and the copy scrolls back in from below, and it loops. Any interaction
     // defers the loop by another hold; scrolling away stops it.
     const gsPanel = document.getElementById('gosuslugi');
-    const GS_FORWARD = 9500; // ms the forward intro takes
-    const GS_HOLD = 3000;     // idle time on the finished screen before looping
-    const GS_RETURN = 1800;   // ms the scroll-back takes
+    const GS_FORWARD = 11500; // ms the forward intro takes
+    const GS_HOLD = 1500;     // idle time on the finished screen before looping
+    const GS_RETURN = 800;    // ms until the loader relaunches (matches the scene-up)
     let gsForwardTimer = 0;
     let gsReturnTimer = 0;
     let gsLoopActive = false;
@@ -378,15 +471,16 @@
         else d.removeAttribute('aria-current');
       });
       const onLight = !!(panels[i] && panels[i].classList.contains('panel--light'));
-      if (navbar) navbar.classList.toggle('navbar--on-light', onLight);
-      // The BM panel (#bm) gives the fixed navbar copy a matching halo too.
-      if (navbar) navbar.classList.toggle('navbar--bm', !!(panels[i] && panels[i].id === 'bm'));
       // The NDA bento runs white cards under the fixed right-hand chrome.
       const isNda = !!(panels[i] && panels[i].id === 'nda');
+      // myexport's video has a dark floor behind the fixed chrome — keep the
+      // back-to-top outline white there.
+      const isMyexport = !!(panels[i] && panels[i].id === 'myexport');
       if (dotsNav) dotsNav.classList.toggle('dots--on-light', onLight);
       if (toTopEl) {
         toTopEl.classList.toggle('to-top--on-light', onLight);
         toTopEl.classList.toggle('to-top--nda', isNda);
+        toTopEl.classList.toggle('to-top--myexport', isMyexport);
         // nothing to scroll up to on the first panel
         toTopEl.classList.toggle('to-top--hidden', i === 0);
       }
@@ -402,6 +496,18 @@
       else stopGsLoop();
     };
 
+    // The header copy colour is applied only once the swap has finished: while a
+    // panel is still moving the bar keeps the colour of the one it is leaving and
+    // flips when the new card has fully arrived (see paint()/animateTo below).
+    const setNavbar = (i) => {
+      if (!navbar || i < 0) return;
+      const onLight = !!(panels[i] && panels[i].classList.contains('panel--light'));
+      navbar.classList.toggle('navbar--on-light', onLight);
+      navbar.classList.toggle('navbar--bm', !!(panels[i] && panels[i].id === 'bm'));
+      // Design deck stays transparent over every panel — no frosted bar.
+      navbar.classList.remove('scrolled');
+    };
+
     let active = -1;
     let target = 0;
     let animating = false;
@@ -409,13 +515,14 @@
     let ticking = false;
     let rafId = 0;
 
-    // The closing NDA screen (#nda) is a sideways strip of four bento blocks. The
+    // The closing NDA screen (#nda) is a sideways strip of two rows of tiles. The
     // wheel pans it continuously (eased, not stepped); keyboard and touch still
-    // move a block at a time. A slim scrollbar at the foot reflects the position.
+    // move roughly a screenful at a time. A slim scrollbar at the foot reflects
+    // the position.
     const ndaPanel = document.getElementById('nda');
     const ndaViewport = ndaPanel ? ndaPanel.querySelector('.nda-viewport') : null;
     const ndaTrack = ndaPanel ? ndaPanel.querySelector('.nda-track') : null;
-    const ndaBlocks = ndaTrack ? Array.from(ndaTrack.querySelectorAll('.nda-block')) : [];
+    const ndaRows = ndaTrack ? Array.from(ndaTrack.querySelectorAll('.nda-row')) : [];
     const ndaScroll = ndaPanel ? ndaPanel.querySelector('.nda-scroll') : null;
     const ndaThumb = ndaScroll ? ndaScroll.querySelector('.nda-thumb') : null;
     const NDA_EASE = 0.18;
@@ -438,27 +545,63 @@
     let ndaSpringRaf = 0;
     let ndaSpringing = false;
 
-    const ndaStep = () => {
-      if (ndaBlocks.length > 1) return ndaBlocks[1].offsetLeft - ndaBlocks[0].offsetLeft;
-      return ndaBlocks[0] ? ndaBlocks[0].offsetWidth : 0;
+    // width of one row of tiles, measured from the row's left edge to the last
+    // tile's right edge; both rows carry the same set of wide/square tiles so
+    // either one measures the strip
+    const ndaRowWidth = (r) => {
+      const last = r.lastElementChild;
+      if (!last) return 0;
+      return last.getBoundingClientRect().right - r.getBoundingClientRect().left;
     };
-    // each rest position centres the first/last block in the viewport instead of
-    // hugging the content column: pad the strip by half the empty space a side
+    const ndaContentWidth = () => {
+      let w = 0;
+      ndaRows.forEach((r) => { w = Math.max(w, ndaRowWidth(r)); });
+      return w;
+    };
+    // keyboard/touch step: glide roughly a screenful of tiles at a time
+    const ndaStep = () => Math.max(200, (ndaViewport ? ndaViewport.clientWidth : 900) * 0.85);
+    // the strip never wraps; when it is narrower than the viewport centre it,
+    // otherwise fall back to the CSS edge gutters (padding reset to '')
+    // room left for the two rows once the heading, the rail and the fixed 40px
+    // gaps around the strip are taken out of the panel's content box
+    const ndaAvail = () => {
+      const cs = getComputedStyle(ndaPanel);
+      const headEl = ndaPanel.querySelector('.nda-head');
+      const headH = headEl ? headEl.offsetHeight : 0;
+      const navH = ndaScroll ? ndaScroll.offsetHeight : 0;
+      const gapTop = parseFloat(getComputedStyle(ndaViewport).marginTop) || 0;
+      const gapNav = ndaScroll ? (parseFloat(getComputedStyle(ndaScroll).marginTop) || 0) : 0;
+      return ndaPanel.clientHeight
+        - (parseFloat(cs.paddingTop) || 0)
+        - (parseFloat(cs.paddingBottom) || 0)
+        - headH - navH - gapTop - gapNav;
+    };
     const ndaLayout = () => {
-      if (!ndaTrack || !ndaViewport || !ndaBlocks.length) return;
-      const bw = ndaBlocks[0].offsetWidth;
-      const pad = Math.max(0, (ndaViewport.clientWidth - bw) / 2);
-      ndaTrack.style.paddingLeft = pad.toFixed(1) + 'px';
-      ndaTrack.style.paddingRight = pad.toFixed(1) + 'px';
+      if (!ndaTrack || !ndaViewport || !ndaRows.length) return;
+      // fit the two rows into the space left under the heading: 288 square tiles
+      // when there is room (the design size), scaled down on shorter screens so
+      // the strip never overflows the panel
+      const gap = parseFloat(getComputedStyle(ndaTrack).getPropertyValue('--nda-gap')) || 24;
+      const size = Math.max(120, Math.min(288, Math.floor((ndaAvail() - gap) / 2)));
+      ndaTrack.style.setProperty('--nda-size', size + 'px');
+      const cw = ndaContentWidth();
+      const pad = Math.max(0, (ndaViewport.clientWidth - cw) / 2);
+      if (pad > 0) {
+        ndaTrack.style.paddingLeft = pad.toFixed(1) + 'px';
+        ndaTrack.style.paddingRight = pad.toFixed(1) + 'px';
+      } else {
+        ndaTrack.style.paddingLeft = '';
+        ndaTrack.style.paddingRight = '';
+      }
     };
-    // width of the whole strip including both centring pads, so the strip can pan
-    // until its last block sits centred in the viewport
+    // width of the whole strip including the edge gutters, so the strip can pan
+    // until its last tile sits flush against the trailing gutter
     const ndaStride = () => {
       if (!ndaTrack) return 0;
-      const last = ndaBlocks[ndaBlocks.length - 1];
-      if (!last) return 0;
-      const padR = parseFloat(getComputedStyle(ndaTrack).paddingRight) || 0;
-      return last.offsetLeft + last.offsetWidth + padR;
+      const cs = getComputedStyle(ndaTrack);
+      const padL = parseFloat(cs.paddingLeft) || 0;
+      const padR = parseFloat(cs.paddingRight) || 0;
+      return ndaContentWidth() + padL + padR;
     };
     const ndaMax = () => {
       if (!ndaTrack || !ndaViewport) return 0;
@@ -731,6 +874,9 @@
       const idx = nearestIndex(window.scrollY);
       if (!animating) target = idx;
       if (idx !== active) { active = idx; setActive(idx); }
+      // while a swap is in flight the bar keeps the colour it had; it flips to
+      // the new panel only when the motion has settled (animating === false)
+      if (!animating) setNavbar(active);
     };
 
     const onWorkScroll = () => {
@@ -819,7 +965,7 @@
     // strip a block at a time, and only leaving the first block hands back to the
     // panels (up to BM)
     const step = (dir) => {
-      if (ndaTrack && ndaBlocks.length && panels[target] && panels[target].id === 'nda') {
+      if (ndaTrack && ndaRows.length && panels[target] && panels[target].id === 'nda') {
         const max = ndaMax();
         if (dir > 0) {
           if (ndaPanTarget >= max - 0.5 && footerEl) {   // at the end: into the footer
@@ -925,5 +1071,9 @@
     ndaLayout();
     applyNda();
     paint();
+    // the heading's loaded font can change how much room is left for the strip
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => { ndaLayout(); applyNda(); });
+    }
   }
 })();
