@@ -287,6 +287,8 @@
     'uniform vec2 uPointer;',
     'uniform float uPointerR;',
     'uniform float uPointerW;',
+    'uniform vec2 uBgPointer;',
+    'uniform float uBgPointerW;',
     'uniform float uStroke;',
     'uniform float uSdfR;',
     'uniform float uGrain;',
@@ -305,14 +307,14 @@
     '  return clamp(hx + hy, 0.0, 1.0);',
     '}',
     'vec2 lensWarp(vec2 gc){',
-    '  vec2 pc = vec2(uPointer.x * uRes.x, uPointer.y * uRes.y) / uCell;',
+    '  vec2 pc = vec2(uBgPointer.x * uRes.x, uBgPointer.y * uRes.y) / uCell;',
     '  vec2 v0 = gc - pc;',
     '  float rr = length(v0);',
     '  float Rc = max(uPointerR * uRes.y / uCell, 1.0);',
     '  float t = rr / Rc;',
     /* smooth gaussian falloff: no hard rim, the lattice bends gradually so the
        edge of the influence never reads as a seam or an arch */
-    '  float ff = exp(-t * t * 1.5) * uPointerW;',
+    '  float ff = exp(-t * t * 1.5) * uBgPointerW;',
     '  return pc + v0 * (1.0 - uLensAmt * ff);',
     '}',
     'void bgCrosses(out float cross, out vec3 tint, out float bright){',
@@ -338,10 +340,10 @@
     '  vec2 gv = vec2(vUv.x * uAspect, vUv.y);',
     '  vec2 g = gl_FragCoord.xy / uBgCell;',
     /* gentle lens bend around the cursor - no colour change, just a small warp */
-    '  vec2 pcell = vec2(uPointer.x * uRes.x, uPointer.y * uRes.y) / uBgCell;',
+    '  vec2 pcell = vec2(uBgPointer.x * uRes.x, uBgPointer.y * uRes.y) / uBgCell;',
     '  vec2 vo = g - pcell;',
     '  float rl = length(vo) / max(uPointerR * uRes.y / uBgCell, 1.0);',
-    '  g = pcell + vo * (1.0 - uBgBend * exp(-rl * rl * 1.5) * uPointerW);',
+    '  g = pcell + vo * (1.0 - uBgBend * exp(-rl * rl * 1.5) * uBgPointerW);',
     /* hard-edged plus: the whole cross is there, or it is not */
     '  vec2 f = abs(fract(g) - 0.5);',
     '  float th = 0.10;',
@@ -486,6 +488,8 @@
     pointer: gl.getUniformLocation(dispProg, 'uPointer'),
     pointerR: gl.getUniformLocation(dispProg, 'uPointerR'),
     pointerW: gl.getUniformLocation(dispProg, 'uPointerW'),
+    bgPointer: gl.getUniformLocation(dispProg, 'uBgPointer'),
+    bgPointerW: gl.getUniformLocation(dispProg, 'uBgPointerW'),
     stroke: gl.getUniformLocation(dispProg, 'uStroke'),
     sdfR: gl.getUniformLocation(dispProg, 'uSdfR'),
     grain: gl.getUniformLocation(dispProg, 'uGrain'),
@@ -616,7 +620,11 @@
     if (th > h * 0.9) { th = h * 0.9; tw = th * ratio; }
     textCtx.imageSmoothingEnabled = true;
     textCtx.imageSmoothingQuality = 'high';
-    textCtx.drawImage(logo, (w - tw) / 2, (h - th) / 2, tw, th);
+    // lift the logotype 72 CSS px above centre (the texture maps 1:1 to the
+    // hero element, so the offset is scaled by h / hero height)
+    var heroCssH = hero.clientHeight || window.innerHeight || h;
+    var lift = h * (72 / heroCssH);
+    textCtx.drawImage(logo, (w - tw) / 2, (h - th) / 2 - lift, tw, th);
 
     if (!sdfTex) {
       buildSdf(w, h);
@@ -651,6 +659,22 @@
   var splatArr = new Float32Array(MAXS * 4);
   var deltaArr = new Float32Array(MAXS * 2);
   var pushArr = new Float32Array(MAXS * 2);
+
+  /* Background-lattice cursor: tracked across the whole page (not just the
+     hero) so the hero's plus-lattice and the seam canvas below, which continues
+     the same lattice, bend around one shared cursor and never disagree at the
+     boundary. Exposed as window.__crossCursor for seam-crosses.js. */
+  var bgPointer = null;
+  var bgFollow = { x: 0.5, y: 0.5 };
+  var bgLastMoveAt = 0;
+  var bgPresence = 0;
+
+  function bgOnMove(e) {
+    bgPointer = toUv(e);
+    bgLastMoveAt = performance.now();
+  }
+  window.addEventListener('pointermove', bgOnMove, { passive: true });
+  window.addEventListener('pointerdown', bgOnMove, { passive: true });
 
   function update(dt) {
     uTime = (performance.now() - timeOrigin) / 1000;
@@ -693,6 +717,25 @@
     splatArr[1] = follow.y;
     splatArr[2] = TUNE.brushR;
     splatArr[3] = presence;
+
+    /* the background lattice rides its own cursor (see bgPointer above) */
+    if (bgPointer) {
+      var kb = 1 - Math.exp(-dt / TUNE.followTau);
+      bgFollow.x += (bgPointer.x - bgFollow.x) * kb;
+      bgFollow.y += (bgPointer.y - bgFollow.y) * kb;
+    }
+    var bgIdle = (now - bgLastMoveAt) / 1000;
+    var bgGate = bgIdle <= TUNE.resetHold
+      ? 1
+      : Math.max(0, 1 - (bgIdle - TUNE.resetHold) / TUNE.resetTime);
+    if (!bgPointer) {
+      bgPresence += (0 - bgPresence) * (1 - Math.exp(-dt / TUNE.presenceDown));
+    } else if (bgGate > bgPresence) {
+      bgPresence += (bgGate - bgPresence) * (1 - Math.exp(-dt / TUNE.presenceUp));
+    } else {
+      bgPresence = bgGate;
+    }
+    window.__crossCursor = { x: bgFollow.x, y: bgFollow.y, w: bgPresence, t: now };
   }
 
   function fieldStep(dt) {
@@ -765,6 +808,8 @@
     gl.uniform2f(dispU.pointer, follow.x, follow.y);
     gl.uniform1f(dispU.pointerR, TUNE.lensR);
     gl.uniform1f(dispU.pointerW, presence);
+    gl.uniform2f(dispU.bgPointer, bgFollow.x, bgFollow.y);
+    gl.uniform1f(dispU.bgPointerW, bgPresence);
     gl.uniform1f(dispU.sdfR, TUNE.sdfRange);
     gl.uniform1f(dispU.grain, TUNE.grain);
     gl.uniform1f(dispU.moveGlow, TUNE.moveGlow);

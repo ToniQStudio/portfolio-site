@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=76">
+<link rel="stylesheet" href="assets/css/style.css?v=109">
 <script>/* deep link: keep the page hidden until main.js jumps to the linked panel,
    so the top panel never flashes before the anchor settles */
 if(/^#p\d+$/.test(location.hash)){document.documentElement.classList.add('work-init');}
@@ -48,11 +48,34 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 
 <main class="snap" id="snap">
 
-	<section class="panel panel--intro" id="intro" style="--bg:#000005" aria-labelledby="t00">
+	<section class="panel panel--intro" id="intro" style="--bg:#000005" aria-labelledby="introKicker t00">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<div class="panel-inner">
-			<h2 class="panel-intro" id="t00">Design</h2>
+			<div class="intro-copy">
+				<p class="intro-kicker" id="introKicker">Дизайн</p>
+				<h2 class="intro-title" id="t00">Компетенции</h2>
+				<ol class="intro-skills">
+					<li><span class="xi-fill">UX-исследования: интервью, юзабилити-тесты</span></li>
+					<li><span class="xi-fill">Валидация гипотез: A/B-тесты</span></li>
+					<li><span class="xi-fill">Продуктовая стратегия: CJM, JTBD, User Flow</span></li>
+					<li><span class="xi-fill">Информационная архитектура</span></li>
+					<li><span class="xi-fill">UX/UI: веб и мобильные продукты</span></li>
+					<li><span class="xi-fill">Визуальный дизайн, анимация, иллюстрации</span></li>
+					<li><span class="xi-fill">Фирменный стиль и брендинг</span></li>
+					<li><span class="xi-fill">Прототипирование и дизайн-спеки</span></li>
+					<li><span class="xi-fill">Дизайн-системы</span></li>
+					<li><span class="xi-fill">Метрики продукта: retention, CR, North Star</span></li>
+					<li><span class="xi-fill">Доступность: WCAG/ГОСТ</span></li>
+					<li><span class="xi-fill">Контроль качества: дизайн-аудит и Design QA</span></li>
+					<li><span class="xi-fill">ИИ-дизайн: ресёрч, интерфейсы, прототипы, контент</span></li>
+					<li><span class="xi-fill">Разработка HTML/CSS и сайтов с ИИ</span></li>
+				</ol>
+			</div>
+			<div class="panel-intro" aria-hidden="true">Design</div>
 		</div>
+		<button class="intro-scroll" id="introScroll" type="button" aria-label="Листать вниз">
+			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+		</button>
 	</section>
 
 	<section class="panel panel--light" id="gosuslugi" style="--bg:#E5ECFB" aria-labelledby="t01">
@@ -199,7 +222,7 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 		<div class="panel-inner">
 			<div class="butik-content">
 				<div class="panel-text">
-					<h2 class="panel-title" id="t03">Фиджитал-универмаг и&nbsp;экосистема цифровых продуктов.<br>Топ-10 E-commerce в России 2019</h2>
+					<h2 class="panel-title" id="t03">Фиджитал-универмаг и&nbsp;экосистема цифровых продуктов<br>Топ-10 E-commerce в России 2019</h2>
 					<p class="panel-role-label">Роль</p>
 					<p class="panel-role">Руководитель направления дизайна</p>
 				</div>
@@ -313,7 +336,8 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 	<section class="panel panel--nda" id="nda" style="--bg:#1A1A1A; --g1:#1A1A1A" aria-labelledby="t17">
 		<span class="panel-bg" aria-hidden="true"></span>
 		<div class="nda-head">
-			<h2 class="panel-link" id="t17">NDA и&nbsp;архив</h2>
+			<p class="intro-kicker">Проекты</p>
+			<h2 class="intro-title" id="t17">NDA и&nbsp;архив</h2>
 		</div>
 		<div class="nda-viewport" aria-hidden="true">
 			<div class="nda-track" id="ndaTrack">
@@ -389,7 +413,6 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 
 
 <nav class="dots" id="dots" aria-label="Навигация по проектам">
-	<a class="dot" href="#intro" aria-label="Design"></a>
 	<a class="dot" href="#gosuslugi" aria-label="Госуслуги"></a>
 	<a class="dot" href="#sfera" aria-label="Сфера"></a>
 	<a class="dot" href="#butik" aria-label="Butik"></a>
@@ -407,6 +430,6 @@ setTimeout(function(){document.documentElement.classList.remove('work-init');},2
 	<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=45"></script>
+<script src="assets/js/main.js?v=70"></script>
 </body>
 </html>

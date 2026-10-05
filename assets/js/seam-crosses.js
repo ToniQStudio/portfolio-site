@@ -30,6 +30,8 @@
     'uniform float uArcR;',
     'uniform float uArcY;',
     'uniform float uPx;',
+    'uniform vec2 uPointer;',
+    'uniform float uPointerW;',
     'float hash21(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
     'float vnoise(vec2 p){',
     '  vec2 i = floor(p); vec2 f = fract(p);',
@@ -49,6 +51,12 @@
     '  vec2 gv = hc / uHeroH;',
     /* the 8px plus lattice (css units - cell scale cancels the device scale) */
     '  vec2 g = hc / 8.0;',
+    /* cursor lens: the same gentle bend as the hero's background lattice, so
+       the crosses here respond to the pointer too */
+    '  vec2 pcell = uPointer / 8.0;',
+    '  vec2 vo = g - pcell;',
+    '  float rl = length(vo) / max(0.30 * uHeroH / 8.0, 1.0);',
+    '  g = pcell + vo * (1.0 - 0.12 * exp(-rl * rl * 1.5) * uPointerW);',
     '  vec2 f = abs(fract(g) - 0.5);',
     '  float th = 0.10;',
     '  float ln = 0.36;',
@@ -97,7 +105,7 @@
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
 
   var U = {};
-  ['uTime', 'uW', 'uH', 'uHeroH', 'uArcR', 'uArcY', 'uPx'].forEach(function (n) {
+  ['uTime', 'uW', 'uH', 'uHeroH', 'uArcR', 'uArcY', 'uPx', 'uPointer', 'uPointerW'].forEach(function (n) {
     U[n] = gl.getUniformLocation(prog, n);
   });
 
@@ -110,6 +118,50 @@
   var running = false;
   var onScreen = false;
   var geom = null;
+
+  /* pointer state — mirrors hero-liquid.js: a smoothed cursor position (in the
+     canvas' css frame, y down negative) and a presence gate that fades out when
+     the cursor has been idle for a while */
+  var pointer = null;
+  var follow = { x: 0, y: 0 };
+  var followReady = false;
+  var presence = 0;
+  var lastMoveAt = 0;
+  var lastFrame = performance.now();
+
+  function updatePointer(dt, now) {
+    /* Prefer the cursor the hero's lattice uses (window.__crossCursor): the
+       same smoothed position and presence make the bend identical on both
+       sides of the hero/seam boundary. Fall back to local tracking when the
+       hero loop is not running (e.g. hero fully scrolled away). */
+    var shared = window.__crossCursor;
+    if (shared && shared.t && (now - shared.t) < 150) {
+      follow.x = shared.x * geom.w;
+      follow.y = shared.y * geom.heroH;
+      followReady = true;
+      presence = shared.w;
+      return;
+    }
+    if (pointer) {
+      if (!followReady) { follow.x = pointer.x; follow.y = pointer.y; followReady = true; }
+      var k = 1 - Math.exp(-dt / 0.05);
+      follow.x += (pointer.x - follow.x) * k;
+      follow.y += (pointer.y - follow.y) * k;
+    }
+    var idle = (now - lastMoveAt) / 1000;
+    var gate = idle <= 1.0 ? 1 : Math.max(0, 1 - (idle - 1.0) / 4.8);
+    presence = gate;
+  }
+
+  function onPointer(e) {
+    if (!canvas) return;
+    var r = canvas.getBoundingClientRect();
+    pointer = { x: e.clientX - r.left, y: -(e.clientY - r.top) };
+    lastMoveAt = performance.now();
+  }
+
+  window.addEventListener('pointermove', onPointer, { passive: true });
+  window.addEventListener('pointerdown', onPointer, { passive: true });
 
   function measure() {
     var w = canvas.clientWidth || 1;
@@ -151,6 +203,8 @@
     gl.uniform1f(U.uArcR, geom.arcR);
     gl.uniform1f(U.uArcY, geom.arcY);
     gl.uniform1f(U.uPx, geom.px);
+    gl.uniform2f(U.uPointer, follow.x, follow.y);
+    gl.uniform1f(U.uPointerW, presence);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -158,12 +212,17 @@
     if (!running) return;
     requestAnimationFrame(frame);
     if (!geom || !hero.classList.contains('is-live')) return;
+    var now = performance.now();
+    var dt = Math.min(0.05, Math.max(0, (now - lastFrame) / 1000));
+    lastFrame = now;
+    updatePointer(dt, now);
     draw();
   }
 
   function start() {
     if (running) return;
     running = true;
+    lastFrame = performance.now();
     requestAnimationFrame(frame);
   }
 

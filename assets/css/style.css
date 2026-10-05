@@ -39,6 +39,12 @@ a:hover { color: var(--gray-4); }
 
 .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
+/* Below the max content width the column is full-bleed, so align its gutters
+   with the header (--edge). Above --maxw it stays a centred 1280 column. */
+@media (max-width: 1280px) {
+  .container { padding-left: var(--edge); padding-right: var(--edge); }
+}
+
 /* ---------------- Header ---------------- */
 
 .navbar {
@@ -120,7 +126,7 @@ body.home .navbar:not(.scrolled) .logo { display: none; }
 body.home .navbar:not(.scrolled) .logo-alt { display: inline-block; }
 
 .navbar .menu {
-  --menu-gap: 68px;
+  --menu-gap: 64px;
   display: flex;
   align-items: flex-start;
   gap: var(--menu-gap);
@@ -141,9 +147,8 @@ body.home .navbar:not(.scrolled) .logo-alt { display: inline-block; }
 @media (max-width: 1200px) { .navbar .menu { --menu-gap: 40px; } }
 @media (max-width: 991px)  { .navbar .menu { --menu-gap: 22px; } }
 
-.navbar.scrolled {
-  height: 72px;
-}
+/* The scrolled bar keeps the same 64px height as the transparent one, so the
+   menu items (and the CTA) never move when the frosted bar appears. */
 
 /* Whole-header slide-out used on the home page, where the header would otherwise
    vanish instantly (it goes absolute as soon as .scrolled is dropped). Placed
@@ -328,9 +333,10 @@ body.menu-open .hamburger span::after { top: 0; transform: rotate(-45deg); backg
    .navbar--on-light — same transparent bar, but ink copy over a light panel
                (used on the design deck, which has no frosted bar at all).
    Both states share the same item layout: logo left, menu + CTA right.
-   The hero bar is 70px tall so the centred menu line (18px) sits 26px from
-   the top edge; the scrolled bar is 72px. */
-body.home .navbar:not(.scrolled) { position: absolute; height: 70px; }
+   The unscrolled bar is the same 64px on every page, so the centred menu line
+   (18px) sits 23px from the top edge; only the scrolled bar is taller (72px).
+   The home page only switches to position:absolute so the bar scrolls away. */
+body.home .navbar:not(.scrolled) { position: absolute; }
 
 /* menu sits beside the CTA with a 44px gap */
 .navbar .menu { align-items: center; margin-left: auto; margin-right: var(--menu-gap); }
@@ -490,7 +496,8 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 .hero-liquid-fallback {
   position: absolute;
   left: 0; right: 0;
-  top: 50%;
+  /* the logotype sits 72px above centre, in step with the live canvas */
+  top: calc(50% - 72px);
   width: 100%;
   height: auto;
   transform: translateY(-50%);
@@ -510,7 +517,7 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   --hero-lead-fs: clamp(22px, 3.8vw, 72px);
   position: absolute;
   left: 0; right: 0;
-  top: calc(50vh + min(6.388vw, 22.86vh) - var(--hero-lead-fs) * 0.62 - 8px);
+  top: calc(50vh + min(6.388vw, 22.86vh) - var(--hero-lead-fs) * 0.62 - 8px - 72px);
   z-index: 3;
   padding: 0 var(--edge);
   display: flex;
@@ -519,20 +526,8 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   pointer-events: none;
 }
 
-/* Staggered load reveal: layer, then lead line 1, 2, 3, then the bottom rail. */
-.hero-lead-big {
-  opacity: 0;
-  will-change: opacity, transform;
-  animation: heroLineIn .95s cubic-bezier(.22, 1, .36, 1) both;
-}
-.hero-lead-big:nth-child(1) { animation-delay: .85s; }
-.hero-lead-big:nth-child(2) { animation-delay: 1.05s; }
-.hero-lead-big:nth-child(3) { animation-delay: 1.25s; }
-
-@keyframes heroLineIn {
-  from { opacity: 0; transform: translateY(32px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* The statement lines are typed in by main.js (fast typewriter), so there is
+   no CSS reveal for them. */
 
 .hero-lead-small,
 .hero-lead-big {
@@ -553,10 +548,47 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 6px;
-  transition: color .3s ease, opacity .3s ease;
+  transition: color .3s ease, opacity .3s ease, text-decoration-color .3s ease;
 }
 
 .hero-lead-link:hover { color: #9a8ffb; }
+
+/* Typewriter intro: the words start as plain, non-interactive text; a blinking
+   caret types them once, then the text turns into the purple underlined link.
+   The caret is hidden by default so no-JS / reduced-motion just shows the link. */
+.hero-lead-link--typing {
+  color: inherit;
+  pointer-events: none;
+  text-decoration-color: transparent;
+}
+
+.hero-lead-caret { display: none; }
+
+.hero-lead-link--typing .hero-lead-caret {
+  display: inline-block;
+  width: 2px;
+  height: .84em;
+  margin-left: 3px;
+  vertical-align: -0.06em;
+  background: currentColor;
+  animation: heroCaretBlink .6s steps(1, end) infinite;
+}
+
+@keyframes heroCaretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* the cursor that rides each statement line while main.js types it in */
+.hero-type-caret {
+  display: inline-block;
+  width: 2px;
+  height: .84em;
+  margin-left: 2px;
+  vertical-align: -0.06em;
+  background: currentColor;
+  animation: heroCaretBlink .6s steps(1, end) infinite;
+}
 
 /* Bottom rail: previous employers · scroll cue · contacts */
 .hero-bottom {
@@ -634,8 +666,9 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 }
 
 .hero-contacts {
-  grid-column: 3;
-  justify-self: end;
+  /* the bottom rail is just the contacts now, so centre them */
+  grid-column: 2;
+  justify-self: center;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -864,7 +897,11 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 
 .expertise {
   /* The dark hero hands over to the content on white paper through the tall
-     luminous seam below; the content then opens on the page's half-gap. */
+     luminous seam below; the content then opens on the page's half-gap. The
+     seam starts right at the hero's bottom edge (no opaque strip in between),
+     so the hero's plus-lattice flows straight into the seam canvas. The 96px
+     of dark space that used to sit above the seam is folded into the seam's
+     --drop instead, which keeps the sphere and the content exactly in place. */
   background: var(--paper);
   padding: 0 0 calc(var(--vl-gap) / 2);
 }
@@ -888,52 +925,47 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 
 /* The seam: a tall stretch of dark space carrying the hand-off. Everything is
    cut from one circle (--arc-r): the arched horizon line (its ends level with
-   the block, its centre lifted) and one radial ramp around it — white deep
-   inside the sphere, climbing to a luminous rim, then the atmosphere fading
-   back to black above it. Every band is concentric with the arc, so the block
-   reads as a sphere cut off by the left and right screen edges. It sits
-   entirely below the hero, so nothing of it shows while the hero is on
-   screen. main.js drives --glint from the scroll, so the orange glint rides
-   the arc from the left screen edge to the right as the seam travels up. */
+   the block, its centre lifted) and one radial ramp around it — a very dark
+   blue right under the luminous rim, easing through blue to white deep inside
+   the sphere, then the atmosphere fading back to black above it. Every band is
+   concentric with the arc, so the block reads as a sphere cut off by the left
+   and right screen edges. It sits entirely below the hero, so nothing of it
+   shows while the hero is on screen. main.js drives --glint from the scroll,
+   so the orange glint rides the arc from the left screen edge to the right as
+   the seam travels up. */
 .seam {
   /* --arc-r is sized so the arc lifts --arc-rise (≈140px at 1440) between the
      centre and the screen edges: rise = r - sqrt(r² - 50vw²). --drop lowers
      the whole sphere (and everything after it) inside a taller block. */
   --line-y: calc(50% + var(--drop) / 2); /* where the arc ends sit */
-  --drop: 140px;                 /* extra dark space above the sphere */
+  --drop: 236px;                 /* 140px sphere lift + the 96px strip folded in */
   --arc-r: 133.48vw;             /* arc radius */
   --arc-rise: 9.72vw;            /* lift of the apex above the ends */
   position: relative;
-  height: calc(clamp(460px, 64vh, 780px) + var(--drop));
+  /* tall enough that the white inside the sphere reaches the seam's bottom all
+     the way to the screen edges, so the blue band is never cut by a straight
+     edge - the hand-off stays a circle, following the arc */
+  height: calc(clamp(720px, 64vh, 820px) + var(--drop));
   overflow: hidden;
   background: radial-gradient(circle var(--arc-r) at 50% calc(var(--line-y) + var(--arc-r) - var(--arc-rise)),
     #ffffff 0,
-    #ffffff calc(var(--arc-r) - 270px),
-    #d5ddff calc(var(--arc-r) - 210px),
-    #a9b8f8 calc(var(--arc-r) - 150px),
-    #6f86ee calc(var(--arc-r) - 90px),
-    #3f5be4 calc(var(--arc-r) - 40px),
-    #4a63e8 calc(var(--arc-r) - 10px),
-    #8fa6ff var(--arc-r),
-    #1d2f9e calc(var(--arc-r) + 5px),
-    #16258c calc(var(--arc-r) + 45px),
-    #0d1a66 calc(var(--arc-r) + 85px),
-    #050b33 calc(var(--arc-r) + 125px),
-    #000000 calc(var(--arc-r) + 175px));
+    #ffffff calc(var(--arc-r) - 300px),
+    #dbe3ff calc(var(--arc-r) - 220px),
+    #93a8f5 calc(var(--arc-r) - 140px),
+    #4d68e0 calc(var(--arc-r) - 72px),
+    #2a41a8 calc(var(--arc-r) - 28px),
+    #1d2f9e calc(var(--arc-r) - 5px),
+    #1d2f9e calc(var(--arc-r) + 0.5px),
+    #16258c calc(var(--arc-r) + 69px),
+    #0d1a66 calc(var(--arc-r) + 130px),
+    #050b33 calc(var(--arc-r) + 191px),
+    #000000 calc(var(--arc-r) + 268px));
 }
 
-/* the sphere settles into the paper: a soft white veil over the last stretch
-   of the block, so its bottom edge is clean white on any viewport height */
-.seam::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 120px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 78%);
-  pointer-events: none;
-}
+/* (the straight white veil that used to sit here is gone: a horizontal fade cut
+   the sphere's arc off with a straight edge, which read as a straight line. The
+   taller seam now lets the sphere's own white reach the bottom, so the hand-off
+   is the arc itself.) */
 
 /* The hero's animated plus-lattice continues into the seam on this canvas:
    seam-crosses.js draws the same WebGL reveal field in the hero's coordinate
@@ -967,8 +999,9 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   animation: seamVeil 9s ease-in-out infinite alternate;
 }
 
-/* the arch line — drawn from the apex outward on approach */
+/* The static arch line is hidden - the moving glint alone rides the arc now. */
 .seam-line {
+  display: none;
   position: absolute;
   left: 50%;
   top: calc(var(--line-y) - var(--arc-rise));
@@ -976,13 +1009,14 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   aspect-ratio: 1;
   border-radius: 50%;
   translate: -50% 0;
-  /* a thin ring of light along the arc: the brand blue at the screen edges
-     (the visible span is the element's centre ~37.5%..62.5%), white in the
-     middle. Always complete - no draw-in. */
+  /* a thin ring of deep blue along the arc: darkest at the screen edges (the
+     visible span is the element's centre ~37.5%..62.5%), a touch lighter at
+     the apex. Always complete - no draw-in. */
   background: linear-gradient(90deg,
-    #0055ff 36%,
-    #ffffff 50%,
-    #0055ff 64%);
+    #0b1a5e 36%,
+    #3f5be4 50%,
+    #0b1a5e 64%);
+  opacity: .5;
   -webkit-mask-image: radial-gradient(circle closest-side,
     transparent 0 calc(100% - 3px),
     #000 calc(100% - 1px));
@@ -991,7 +1025,7 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
     #000 calc(100% - 1px));
 }
 
-/* the glint: a soft orange spark riding the arc. --glint (0..1, driven by the
+/* the glint: a soft white spark riding the arc. --glint (0..1, driven by the
    scroll) swings the wrapper from the left screen edge (-22deg) over the apex
    to the right edge (+22deg). */
 .seam-glint {
@@ -1003,24 +1037,78 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   rotate: calc(-22deg + var(--glint, 0) * 44deg);
 }
 
+/* The glint: a wide flattened ball with a small white core at its centre and
+   two thin tails. Everything follows the seam arc - the ball is a short, thick
+   band of the same ring, so its edges bend down instead of running straight.
+   i is only a positioning box at the apex. */
 .seam-glint i {
   position: absolute;
   left: 0;
-  top: calc(-1 * var(--arc-r));
+  /* the ring's apex sits one arc radius above the circle centre */
+  top: calc(var(--arc-r) * -1);
+  width: clamp(160px, 26vw, 400px);
+  height: clamp(22px, 2.8vw, 40px);
   translate: -50% -50%;
-  width: clamp(280px, 36vw, 600px);
-  height: 12px;
-  border-radius: 999px;
-  /* a bright orange core that fades out toward both ends */
-  background: linear-gradient(90deg,
-    rgba(255, 122, 26, 0),
-    rgba(255, 132, 30, .4) 26%,
-    rgba(255, 148, 42, .95) 44%,
-    rgba(255, 154, 48, .98) 56%,
-    rgba(255, 132, 30, .4) 74%,
-    rgba(255, 122, 26, 0));
-  filter: blur(4px);
-  box-shadow: 0 0 28px rgba(255, 150, 60, .7);
+  pointer-events: none;
+}
+
+/* 1) the tails: a narrow band of the ring, fading out by angle. Drawn on the
+   wrapper itself so the band is centred on the seam circle (the wrapper
+   origin), not on the oval - otherwise the ring would sit a radius away. */
+.seam-glint::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* a full ring the size of the seam circle, so the tails bend with the arc */
+  width: calc(var(--arc-r) * 2);
+  height: calc(var(--arc-r) * 2);
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: conic-gradient(from -12.18deg at 50% 50%,
+    rgba(255, 255, 255, 0) 0deg,
+    rgba(255, 255, 255, .95) 7.49deg,
+    rgba(255, 255, 255, 1) 12.18deg,
+    rgba(255, 255, 255, .95) 16.87deg,
+    rgba(255, 255, 255, 0) 24.36deg);
+  -webkit-mask-image: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 2.5px),
+    #000 calc(100% - 2px) calc(100% - 1px),
+    transparent 100%);
+  mask-image: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 2.5px),
+    #000 calc(100% - 2px) calc(100% - 1px),
+    transparent 100%);
+  filter: blur(1px);
+}
+
+/* 2) the body: one short band of the same ring, so the ball bends with the arc
+   and its edges taper into the thin tails. i sits at the apex, so the band is
+   centred by stepping down one arc radius to the circle centre. */
+.seam-glint i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--arc-r));
+  width: calc(var(--arc-r) * 2);
+  height: calc(var(--arc-r) * 2);
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: conic-gradient(from -6.09deg at 50% 50%,
+    rgba(255, 255, 255, 0) 0deg,
+    rgba(255, 255, 255, .92) 3.05deg,
+    rgba(255, 255, 255, 1) 6.09deg,
+    rgba(255, 255, 255, .92) 9.13deg,
+    rgba(255, 255, 255, 0) 12.18deg);
+  -webkit-mask-image: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 5px),
+    #000 calc(100% - 4px) calc(100% - 1px),
+    transparent 100%);
+  mask-image: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 5px),
+    #000 calc(100% - 4px) calc(100% - 1px),
+    transparent 100%);
+  filter: blur(1.5px);
 }
 
 @keyframes seamVeil {
@@ -1064,7 +1152,8 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
    and the hairline under the title thickens into the full aurora rule. The
    small print takes a deeper end-stop so it still clears AA at 16px. */
 
-.xi { margin-top: 20px; }
+/* Heading and the whole block below it sit 64px lower (20px base + 64px). */
+.xi { margin-top: 84px; }
 
 /* Section openers: the display title leads the content column (flush with the
    rows and cards), with a generous gap down to the content. */
@@ -1211,6 +1300,8 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 /* explanation — a short column on the right, wrapping to a few lines */
 .xi-desc {
   grid-area: 2 / 3;
+  /* right edge stays put; 430px makes every description wrap to exactly 3 lines */
+  margin-left: calc(var(--xi-aside) - 430px);
   margin-top: clamp(8px, 1vw, 14px);
   font-size: 16px;
   line-height: 1.6;
@@ -1256,7 +1347,7 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   .xi-label { grid-area: 1 / 2; }
   .xi-label::after { right: 0; }
   .xi-row:hover .xi-label::after { right: calc(-8px); }
-  .xi-desc { grid-area: 2 / 2; margin-top: 8px; }
+  .xi-desc { grid-area: 2 / 2; margin-top: 8px; margin-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1668,7 +1759,10 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 
 /* ---------------- Project cards ---------------- */
 
-.pcards { padding: calc(var(--vl-gap) / 2 + 20px) 0 calc(var(--vl-gap) / 2); background: #ededed; }
+.pcards {
+  padding: calc(var(--vl-gap) / 2 + 20px) 0 calc(var(--vl-gap) / 2);
+  background: #ededed;
+}
 
 .pcards .ex-title { margin-bottom: 0; }
 
@@ -2033,30 +2127,14 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
 .pcard.reveal.in:nth-child(4) { animation-delay: .18s; }
 
 .pcards-grid .pcard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 28px 56px -32px rgba(30, 21, 82, .24);
+  transform: translateY(-8px);
+  box-shadow:
+    0 36px 64px -28px rgba(30, 21, 82, .34),
+    0 12px 24px -18px rgba(30, 21, 82, .22);
 }
 
-/* Hover colour: each card takes on its project's colour — Госуслуги blue,
-   Сфера violet — and flips its copy and logo to white. Butik inverts the
-   other way: white card, dark copy, light-grey wordmark. */
-.pcard--gosuslugi:hover { background-color: #0D4CD3; }
-.pcard--sfera:hover { background-color: #422BEC; }
-.pcard--butik:hover { background-color: #ffffff; }
-
-.pcard--gosuslugi:hover .pcard-title,
-.pcard--gosuslugi:hover .pcard-desc,
-.pcard--gosuslugi:hover .pcard-domain,
-.pcard--sfera:hover .pcard-title,
-.pcard--sfera:hover .pcard-desc,
-.pcard--sfera:hover .pcard-domain { color: #ffffff; }
-
-.pcard--gosuslugi:hover .pcard-logo,
-.pcard--sfera:hover .pcard-logo { filter: brightness(0) invert(1); }
-
-.pcard--butik:hover .pcard-title { color: var(--ink); }
-.pcard--butik:hover .pcard-desc { color: var(--gray-2); }
-.pcard--butik:hover .pcard-bigmark { filter: invert(0); opacity: .25; }
+/* Hover keeps each card's own colour — no inversion. The card only lifts on
+   its shadow, so copy and logos stay exactly as they are at rest. */
 
 @media (max-width: 900px) {
   .pcard--wide .pcard-link {
@@ -2814,6 +2892,61 @@ body.menu-open .overlay { opacity: 1; visibility: visible; }
   color: #ffffff;
 }
 
+/* Home page: reveal footer. The footer is pinned to the foot of the viewport
+   behind the page; the content scrolls up over it and reveals it. A fixed black
+   layer climbs high behind everything, so the footer's own edge never shows
+   while scrolling; the grey panel's bottom corners are rounded and reveal that
+   black. main.js keeps a gap below the content equal to the footer height. */
+body.home main {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+body.home .sfooter {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  border-top: 0;
+}
+
+/* the footer's black climbs 140px above its top edge (no layout impact, so the
+   grey panel keeps its position) */
+body.home .sfooter::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 140px;
+  background: #000005;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* the grey panel is a rounded card. A plate sits just behind it: white behind
+   the top corners (so they read as the white section above, never the black
+   footer) and black behind the bottom corners (the footer's black climbing up
+   to meet them). */
+body.home .pcards {
+  position: relative;
+  border-radius: clamp(28px, 4vw, 64px);
+}
+
+body.home .pcards::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    #ffffff 0,
+    #ffffff calc(100% - 140px),
+    #000005 calc(100% - 140px));
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* stretch the footer to the same edges as the header copy (--edge, scrollbar-
    compensated on the right so both align on every page) */
 .sfooter-inner {
@@ -3190,7 +3323,8 @@ body.work { background: var(--ink); }
   padding-right: var(--edge);
 }
 
-/* these panels carry long project descriptions — give the copy column room */
+/* these panels carry long project descriptions — give the copy column room,
+   but never let it grow past half the viewport so the visual keeps its half */
 #sfera .panel-text,
 #expertme .panel-text,
 #rosatom .panel-text,
@@ -3198,12 +3332,14 @@ body.work { background: var(--ink); }
 #inexpay .panel-text,
 #skillstech .panel-text,
 #bm .panel-text {
-  max-width: 800px;
+  max-width: min(800px, 50vw);
 }
 
-/* copy + button sit 64px higher than the centred default */
+/* copy + button sit 64px higher than the centred default; the copy column is
+   capped at half the screen at every resolution. Госуслуги (inside its monitor)
+   and Butik (its own composition) are excluded. */
 .panel-text {
-  max-width: 620px;
+  max-width: min(620px, 50vw);
   transform: translateY(-64px);
 }
 
@@ -3277,33 +3413,235 @@ body.work { background: var(--ink); }
   color: rgba(255, 255, 255, .82);
 }
 
-/* Intro panel (#intro) — an empty cover screen with the section name centred. */
+/* Intro panel (#intro, design page) — a two-column opening split at the screen
+   middle: the design competencies on the left (right edge kept short of centre)
+   and the keyword terminal on the right, its foot aligned with the copy column. */
+.panel--intro { --intro-split: 50%; }
 .panel--intro .panel-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  height: 100%;
   max-width: none;
-  padding: 0 40px;
+  padding: 0 var(--edge);
 }
 
-.panel-intro {
+/* left column: heading + competency list. It spans the panel top-to-bottom (with
+   clear margins) and the rows spread out to fill that height. Its right edge stops
+   short of the screen middle so the terminal starts clear of it. */
+.intro-copy {
+  position: absolute;
+  left: var(--edge);
+  top: 105px;   /* 64px below the header's «Антон Миньков» text (its line-box ends at 41px) */
+  bottom: clamp(56px, 7.5vh, 100px);
+  z-index: 2;
+  width: max-content;
+  max-width: calc(50% - var(--edge) - 80px);
+  display: flex;
+  flex-direction: column;
+}
+.intro-kicker {
+  flex: none;
+  margin: 0 0 clamp(10px, 1.4vh, 18px);
+  font-size: clamp(13px, 1.1vw, 18px);
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: rgba(255, 255, 255, .6);
+}
+.intro-title {
+  flex: none;
+  /* lifted 8px; the extra bottom margin keeps the list where it was */
+  margin: -8px 0 calc(clamp(18px, 2.6vh, 40px) + 8px);
+  font-size: 72px;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  color: #ffffff;
+}
+/* the competency index mimics the home page's «Ключевые экспертизы» rows:
+   numbered lines with a hairline and the same ramp wipe on hover. Rows fill the
+   available height so the spacing grows with the screen. */
+.intro-skills {
+  list-style: none;
+  flex: 1 1 auto;
+  align-self: flex-start;   /* hug the widest row, so every rule ends with it */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin: 0;
-  font-size: clamp(72px, 15vw, 240px);
+  padding: 0;
+}
+.intro-skills li {
+  position: relative;
+  padding: 0 0 clamp(6px, 0.8vh, 12px) 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, .78);
+}
+.intro-skills li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, .14);
+  transition: background .35s ease, height .35s ease;
+}
+.intro-skills .xi-fill { transition: transform .55s cubic-bezier(.22, 1, .36, 1); }
+.intro-skills .xi-fill::after {
+  background-image: linear-gradient(90deg, #0055FF 0%, #7B2BFF 46%, #FF0033 100%);
+}
+.intro-skills li:hover .xi-fill { transform: translateX(8px); }
+.intro-skills li:hover .xi-fill::after { clip-path: inset(0 0 0 0); }
+.intro-skills li:hover::after {
+  height: 2px;
+  background: linear-gradient(90deg, #0055FF 0%, #7B2BFF 26%, #FF0033 52%, #FFCC00 76%, #00CC66 100%);
+}
+
+/* entrance: on load (and when the cover is revisited) the kicker, heading and
+   rows rise in, cascading down the list */
+.intro-copy.is-in .intro-kicker {
+  animation: introRise .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+.intro-copy.is-in .intro-title {
+  animation: introRise .7s cubic-bezier(.22, 1, .36, 1) .08s both;
+}
+.intro-copy.is-in .intro-skills li {
+  animation: introRise .7s cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(.22s + var(--intro-i, 0) * 55ms);
+}
+@keyframes introRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-copy.is-in .intro-kicker,
+  .intro-copy.is-in .intro-title,
+  .intro-copy.is-in .intro-skills li { animation: none; }
+}
+
+/* right column: the keyword terminal, one fixed 80px size; long terms run off
+   the right edge of the screen and are clipped by the panel */
+.panel-intro {
+  position: absolute;
+  left: var(--intro-split);
+  right: var(--edge);
+  top: 50%;
+  margin: 0;
+  font-size: 80px;
   line-height: 1;
   font-weight: 800;
   letter-spacing: -.03em;
   color: #ffffff;
-  text-align: center;
+  text-align: left;
+  transform: translateY(-50%);
 }
 
-/* butik — Butik: the wordmark runs full width under the fixed navbar, and the
-   copy + CRT film sit in a left-aligned column further down the page. */
-.panel--butik { align-items: flex-start; }
+.intro-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: 1em;
+  white-space: nowrap;
+  /* the active line sits at the foot; finished words rise and fade */
+  transition: transform .55s cubic-bezier(.22, 1, .36, 1),
+              opacity .55s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* the caret is positioned by JS on the active (bottom) line */
+.intro-caret {
+  position: absolute;
+  top: 50%;
+  left: var(--intro-split);
+  width: clamp(2px, .03em, 8px);
+  height: .84em;
+  transform: translateY(-50%);
+  background: #ffffff;
+  animation: heroCaretBlink .6s steps(1, end) infinite;
+}
+
+/* the glide is enabled only for the "Enter" hop, never between typed characters */
+.intro-caret--glide {
+  transition: left .55s cubic-bezier(.22, 1, .36, 1), top .55s cubic-bezier(.22, 1, .36, 1), font-size .55s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* intro scroll cue — a bobbing chevron at the bottom centre, inviting the first
+   downward step */
+.intro-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(4px, 0.8vh, 14px);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  transform: translateX(-50%);
+  color: #ffffff;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: opacity .3s ease;
+}
+.intro-scroll svg { display: block; width: 24px; height: 24px; }
+.intro-scroll svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.intro-scroll svg { animation: cueBob 2.6s ease-in-out 1.2s infinite; }
+.intro-scroll:hover { opacity: .72; }
+@media (prefers-reduced-motion: reduce) {
+  .intro-scroll svg { animation: none; }
+}
+
+/* narrow screens: drop the decorative terminal, let the list use the width */
+@media (max-width: 1080px) {
+  .panel-intro,
+  .intro-caret { display: none; }
+  .intro-copy {
+    right: var(--edge);
+    width: auto;
+    max-width: none;
+  }
+  .intro-title { white-space: normal; }
+}
+
+/* short screens: keep the whole list on one screen */
+@media (max-height: 660px) {
+  .intro-copy { bottom: 56px; }
+  .intro-title { margin-bottom: 14px; }
+  .intro-skills li { padding-bottom: 4px; }
+}
+
+/* butik — Butik: the wordmark runs full width as a backdrop under the fixed
+   navbar; the copy + CRT film sit in front of it in a left-aligned column. The
+   title is pulled up into the lower part of the wordmark and the film takes the
+   rest of the height, so both stay generous and the film never runs off-screen
+   (its width is capped by the height left below the copy). */
+.panel--butik {
+  align-items: flex-start;
+  --butik-side: clamp(20px, 4vw, 40px);
+  /* the wordmark runs edge to edge; its height follows from the 2400×505
+     viewBox ratio */
+  --butik-mark-h: calc(100vw * 505 / 2400);
+  /* the copy column rides high inside the wordmark (never under the 64px
+     navbar), so the title sits near the top and the film gets the rest */
+  --butik-top: max(88px, calc(var(--butik-mark-h) * 0.42));
+  /* reserve for the title + role block + bottom padding */
+  --butik-copy-h: clamp(130px, 16vh, 220px);
+}
 
 .panel--butik .panel-inner {
   display: flex;
   justify-content: center;
-  padding: 300px 40px 80px;
+  padding:
+    var(--butik-top)
+    var(--butik-side)
+    clamp(16px, 2.8vh, 56px);
 }
 
 /* oversized wordmark stretched across the page, pinned to the top edge */
@@ -3314,8 +3652,9 @@ body.work { background: var(--ink); }
   width: 100%;
   max-width: none;
   height: auto;
-  filter: brightness(0) invert(1);
-  opacity: .055;
+  /* Solid #272727 wordmark (the SVG is tinted via filter, not opacity). */
+  filter: brightness(0) invert(15.3%);
+  opacity: 1;
   z-index: 0;
   pointer-events: none;
 }
@@ -3343,18 +3682,25 @@ body.work { background: var(--ink); }
   margin-top: 0;
 }
 
-.panel--butik .panel-role-label { margin-top: 44px; }
+.panel--butik .panel-role-label { margin-top: clamp(18px, 2.4vh, 36px); }
 .panel--butik .panel-role { margin-top: 6px; font-size: 16px; }
 
 /* the CRT frame (Temp/TV.png) at 1006×740, flush under the role and centred
-   on the page (its natural 1.36:1 matches the artwork, so no cropping) */
+   on the page (its natural 1.36:1 matches the artwork, so no cropping). Its
+   width is the smallest of the design width, the column width, and whatever
+   the height below the copy allows — so the film never runs off the screen. */
 .butik-media {
   position: relative;
-  width: min(1006px, calc(100vw - 64px));
+  width: min(
+    1006px,
+    100%,
+    calc(100vw - 2 * var(--butik-side)),
+    calc(max(0px, 100vh - var(--butik-top) - var(--butik-copy-h)) * 1006 / 740)
+  );
   aspect-ratio: 1006 / 740;
   margin-top: 0;
-  margin-left: 50%;
-  transform: translateX(-50%);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .butik-media-frame {
@@ -3374,9 +3720,13 @@ body.work { background: var(--ink); }
   background: #000;
 }
 
-@media (max-width: 900px) {
-  .panel--butik .panel-inner { padding: 150px 22px 90px; }
-  .panel--butik .panel-role-label { margin-top: 30px; }
+/* On very short viewports keep the title high but shrink the reserved copy so
+   the film still gets usable height. */
+@media (max-height: 620px) {
+  .panel--butik {
+    --butik-top: max(72px, calc(var(--butik-mark-h) * 0.5));
+    --butik-copy-h: clamp(130px, 34vh, 190px);
+  }
 }
 
 /* NDA and Archive: the dark closing screen. The heading sits high — clear of the
@@ -3388,9 +3738,11 @@ body.work { background: var(--ink); }
 .panel--nda {
   --nda-gap: 24px;
   --nda-size: 288px;
-  /* matches the footer content column (max-width 1280 + 40px side padding): the
-     strip's first and last rest positions line up with the footer edges */
-  --nda-gutter: max(40px, calc((100vw - 1280px) / 2 + 40px));
+  /* mirror the header gutter (--edge) exactly: at rest (pan 0) the first tile's
+     left edge and the heading sit --edge from the screen, and at the end of the
+     pan the last tile's right edge sits --edge from the other side — at any
+     resolution. */
+  --nda-gutter: var(--edge);
   --nda-gap-y: clamp(16px, 3.4vh, 56px);
   --nda-gap-title: 96px;
   --nda-nav-h: 8px;
@@ -3403,10 +3755,10 @@ body.work { background: var(--ink); }
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  /* centre the heading + strip + rail group, so the 40px gaps above and below
-     the cards are exact rather than padded out by leftover space */
-  justify-content: center;
-  padding: calc(var(--nda-header) + var(--nda-gap-y)) 0 var(--nda-gap-bottom);
+  /* the heading sits at the top like the opening screen; the strip + rail flow
+     under it */
+  justify-content: flex-start;
+  padding: 105px 0 var(--nda-gap-bottom);
   overflow: hidden;
 }
 
@@ -3418,14 +3770,9 @@ body.work { background: var(--ink); }
   text-align: left;
 }
 
-/* the NDA heading wears the home-page section title type (.sec-title):
-   Inter, regular weight, large and open - but light on the dark panel */
-.panel--nda .nda-head .panel-link {
-  font-size: clamp(22px, 3.8vw, 72px);
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1.24;
-}
+/* the NDA heading reuses the opening screen's kicker + title type, so both
+   sections start at the same offset from the top and share the text→heading gap */
+.nda-head .intro-title { margin: -8px 0 0; }
 
 .nda-viewport {
   position: relative;
@@ -3992,7 +4339,11 @@ body.work { background: var(--ink); }
   flex-direction: column;
   padding: 6px 4px;
   transform: translateY(-50%);
+  transition: opacity .3s ease;
 }
+
+/* hidden while the cover panel (no dots) is active */
+.dots--hidden { opacity: 0; pointer-events: none; }
 
 .dot {
   position: relative;

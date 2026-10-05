@@ -112,6 +112,11 @@
     el.setAttribute('data-text', el.textContent);
   });
 
+  // Design intro rows: index each row so its entrance can be staggered.
+  document.querySelectorAll('.intro-skills li').forEach((li, i) => {
+    li.style.setProperty('--intro-i', i);
+  });
+
   // Butik (#butik): the copy column — and the CRT film below it — take the width
   // of the title's own longest line, and the whole group is centred on the page.
   const butikPanel = document.getElementById('butik');
@@ -137,20 +142,143 @@
   const heroLeadEl = document.querySelector('.hero-lead');
   if (heroLeadEl) {
     const leadLines = Array.from(heroLeadEl.querySelectorAll('.hero-lead-big'));
+    // the first real text node of each line (line 3 also holds the <br> + link)
+    const leadNodes = leadLines.map((el) => {
+      for (let n = el.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3 && n.textContent.trim()) return n;
+      }
+      return null;
+    });
+    const leadFull = leadNodes.map((n) => (n ? n.textContent : ''));
+    const leadShown = leadFull.slice(); // currently visible prefix per line
+    // the blinking cursor that rides the line being typed
+    const typeCaret = document.createElement('span');
+    typeCaret.className = 'hero-type-caret';
+    typeCaret.setAttribute('aria-hidden', 'true');
     const fitHeroLead = () => {
       const cs = getComputedStyle(heroLeadEl);
       const avail = heroLeadEl.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
       if (avail <= 0 || !leadLines.length) return;
+      // measure with the finished text, even mid-typing, so the scale is always
+      // based on the complete line and never drifts
+      leadNodes.forEach((n, i) => { if (n && n.textContent !== leadFull[i]) n.textContent = leadFull[i]; });
+      if (typeCaret.parentNode) typeCaret.style.display = 'none'; // ignore the cursor width
+      const tw = heroLeadEl.querySelector('.hero-lead-tw');
+      const twFull = tw ? (tw.dataset.full || tw.textContent) : null;
+      const twTyped = tw ? tw.textContent : null;
+      if (tw && twTyped !== twFull) tw.textContent = twFull;
       const REF = 100;
       heroLeadEl.style.setProperty('--hero-lead-fs', REF + 'px');
       let maxW = 0;
       leadLines.forEach((el) => { maxW = Math.max(maxW, el.getBoundingClientRect().width); });
+      leadNodes.forEach((n, i) => { if (n) n.textContent = leadShown[i]; });
+      if (typeCaret.parentNode) typeCaret.style.display = '';
+      if (tw && twTyped !== twFull) tw.textContent = twTyped;
       if (maxW <= 0) return;
       heroLeadEl.style.setProperty('--hero-lead-fs', (avail * REF / maxW).toFixed(2) + 'px');
     };
     fitHeroLead();
     addEventListener('resize', fitHeroLead);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeroLead);
+
+    // Link typist setup. The link text is hidden up front and only typed once
+    // the three statement lines are done.
+    const twLink = heroLeadEl.querySelector('.hero-lead-link');
+    const twText = heroLeadEl.querySelector('.hero-lead-tw');
+    const linkText = twText ? twText.textContent : '';
+    if (twText) twText.dataset.full = linkText;
+
+    // Timing shared by every typist.
+    const TYPE_MS = 8;      // per character, the same speed everywhere
+    const BLINK_MS = 600;   // matches the heroCaretBlink animation
+    const BLINKS = 2;       // blinks before the first line starts
+
+    // Typewriter for the three statement lines. Before each line the cursor
+    // moves onto that line and blinks, then the line is typed.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const typeLeadLine = (i) => {
+        if (i >= leadNodes.length) {
+          if (typeCaret.parentNode) typeCaret.parentNode.removeChild(typeCaret);
+          startLinkTyping();
+          return;
+        }
+        const node = leadNodes[i];
+        const full = leadFull[i];
+        if (!node || !full) return typeLeadLine(i + 1);
+        // park the cursor on this line, let it blink, then type
+        node.parentNode.insertBefore(typeCaret, node.nextSibling);
+        // the first line blinks a few times; the rest just once
+        const wait = (i === 0 ? BLINKS : 1) * BLINK_MS;
+        setTimeout(() => {
+          let c = 0;
+          const step = () => {
+            c += 1;
+            leadShown[i] = full.slice(0, c);
+            node.textContent = leadShown[i];
+            if (c < full.length) setTimeout(step, TYPE_MS);
+            else typeLeadLine(i + 1);
+          };
+          step();
+        }, wait);
+      };
+      // clear up front so the finished lines never flash before typing
+      leadNodes.forEach((n) => { if (n) n.textContent = ''; });
+      leadShown.fill('');
+      if (twText) twText.textContent = ''; // the link is typed later
+      typeLeadLine(0);
+    }
+
+    // Typist for the "Обсудить проект" link. It only starts once the three
+    // statement lines are done: the caret appears, blinks, then the words are
+    // typed at the same speed as the lines.
+    const startLinkTyping = () => {
+      if (!twLink || !twText) return;
+      twText.textContent = '';
+      twLink.classList.add('hero-lead-link--typing');
+      twLink.tabIndex = -1;
+      const type = () => {
+        let i = 0;
+        const step = () => {
+          i += 1;
+          twText.textContent = linkText.slice(0, i);
+          if (i < linkText.length) {
+            setTimeout(step, TYPE_MS);
+          } else {
+            // let the caret blink once more, then drop it and activate the link
+            setTimeout(() => {
+              twLink.classList.remove('hero-lead-link--typing');
+              twLink.classList.add('hero-lead-link--typed');
+              twLink.removeAttribute('tabindex');
+            }, 350);
+          }
+        };
+        step();
+      };
+      setTimeout(type, BLINK_MS); // the link is the fourth line: one blink
+    };
+  }
+
+  // Home page reveal footer: the footer is pinned to the viewport bottom behind
+  // the page, so give the content a bottom gap equal to its height - scrolling
+  // to the end then reveals the whole footer from behind the grey panel.
+  {
+    const footEl = document.querySelector('.sfooter');
+    const pageEl = document.querySelector('main');
+    if (document.body.classList.contains('home') && footEl && pageEl) {
+      // Stop the scroll so the grey panel's bottom never rises more than 52px
+      // above the footer's "Антон Миньков" name; the black behind (the footer
+      // plus its 140px climb) fills whatever shows below it.
+      const setFooterReveal = () => {
+        const nameEl = footEl.querySelector('.sfooter-name');
+        if (!nameEl) return;
+        const nameTop = nameEl.getBoundingClientRect().top;
+        pageEl.style.marginBottom = Math.max(0, window.innerHeight - (nameTop - 52)) + 'px';
+      };
+      setFooterReveal();
+      addEventListener('resize', setFooterReveal, { passive: true });
+      addEventListener('load', setFooterReveal);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(setFooterReveal);
+    }
   }
 
   // Pause background videos for reduced motion
@@ -227,6 +355,157 @@
       });
     }, { threshold: 0.4 });
     statNums.forEach((el) => io2.observe(el));
+  }
+
+  // Design intro (#intro, design.html) — the right-hand column of the opening:
+  // a terminal that types the design keywords. The active line is pinned to the
+  // foot of the competency list; each finished word rises one step and fades as it
+  // goes up. Long terms run off the right edge; without JS (or with reduced motion)
+  // the plain static word is left.
+  const introTitle = document.querySelector('.panel--intro .panel-intro');
+  const introInner = introTitle ? introTitle.parentNode : null;
+  const introCopy = introInner ? introInner.querySelector('.intro-copy') : null;
+  const introList = introInner ? introInner.querySelector('.intro-skills') : null;
+  if (introTitle && introInner && !reducedMotion) {
+    const INTRO_WORDS = [
+      'Design', 'UX/UI', 'Design System', 'UX Metrics', 'Retention',
+      'Conversion Rate', 'North Star Metric', 'A/B Testing', 'Hypotheses', 'User Flow'
+    ];
+    const INTRO_BLINK_MS = 600;  // matches the heroCaretBlink animation
+    const INTRO_BLINKS = 4;      // caret blinks before the very first word
+    const INTRO_TYPE_MS = 40;    // per character
+    const INTRO_ENTER_MS = 400;  // pause after a word, before "Enter"
+    const INTRO_RISE_MS = 600;   // pause after "Enter", before the next word
+    const INTRO_MIN_W = 240;     // below this the terminal is dropped
+    const INTRO_FS = 80;         // one fixed size for every term
+
+    const innerRect = () => introInner.getBoundingClientRect();
+    // the active line is pinned to the foot of the competency list (the text),
+    // not to the heading above it
+    const anchorBottom = () => {
+      const r = innerRect();
+      const el = introList || introCopy;
+      return el ? el.getBoundingClientRect().bottom - r.top : introInner.clientHeight;
+    };
+
+    // the terminal occupies the right half (CSS left: 50%); its width also tells
+    // us whether it is visible at all (hidden below 1080px)
+    if (introTitle.clientWidth >= INTRO_MIN_W) {
+      // the terminal is decorative (aria-hidden in the markup); clear the static
+      // fallback word before the animated lines are built
+      introTitle.textContent = '';
+
+      const caret = document.createElement('span');
+      caret.className = 'intro-caret';
+      caret.setAttribute('aria-hidden', 'true');
+      introInner.appendChild(caret);
+
+      let active = null;
+      const lines = [];
+
+      // the active line is pinned to the foot of the competency list; each
+      // finished word rises one step up and fades as it goes
+      const setOrigin = () => {
+        const center = introInner.clientHeight / 2;
+        introTitle.style.transform = 'translateY(' + (anchorBottom() - center) + 'px)';
+      };
+      const place = () => {
+        lines.forEach((line) => {
+          line.el.style.transform = 'translateY(' + (-line.d * INTRO_FS) + 'px)';
+          line.el.style.opacity = Math.max(0, 1 - 0.1 * line.d).toFixed(2);
+        });
+      };
+      // every term is the same fixed size; long ones simply run off the right
+      const buildLine = (word) => {
+        const el = document.createElement('span');
+        el.className = 'intro-line';
+        el.setAttribute('aria-hidden', 'true');
+        el.style.fontSize = INTRO_FS + 'px';
+        const text = document.createTextNode('');
+        el.appendChild(text);
+        introTitle.appendChild(el);
+        const line = { el, text, fs: INTRO_FS, d: 0, word };
+        lines.push(line);
+        return line;
+      };
+      // once a word has risen past the fade it can leave the DOM
+      const recycle = () => {
+        while (lines.length && lines[0].d > 10) {
+          const old = lines.shift();
+          if (old.el.parentNode) old.el.parentNode.removeChild(old.el);
+        }
+      };
+      const setCaret = (x) => {
+        const r = innerRect();
+        caret.style.left = (introTitle.getBoundingClientRect().left - r.left + x) + 'px';
+      };
+      const setCaretTop = () => {
+        caret.style.top = (anchorBottom() - (active ? active.fs / 2 : 0)) + 'px';
+      };
+      const caretX = (line) => {
+        if (!line.text.nodeValue) return 0;
+        const r = document.createRange();
+        r.selectNodeContents(line.text);
+        const rect = r.getBoundingClientRect();
+        return rect.width > 0 ? rect.right - introTitle.getBoundingClientRect().left : 0;
+      };
+
+      const typeWord = (line, word, done) => {
+        caret.classList.remove('intro-caret--glide');  // character steps must not ease
+        let i = 0;
+        const step = () => {
+          i += 1;
+          line.text.nodeValue = word.slice(0, i);
+          setCaret(caretX(line));
+          if (i < word.length) setTimeout(step, INTRO_TYPE_MS);
+          else setTimeout(done, INTRO_ENTER_MS);
+        };
+        step();
+      };
+
+      const pressEnter = (index) => {
+        lines.forEach((line) => { line.d += 1; });      // finished words fall a step
+        const nextWord = INTRO_WORDS[index + 1];        // undefined after the last term
+        const line = buildLine(nextWord == null ? '' : nextWord);
+        active = line;
+        place();                                        // animate the fall + fade
+        recycle();
+        caret.classList.add('intro-caret--glide');
+        void caret.offsetWidth;                         // settle the start of the glide
+        caret.style.fontSize = line.fs + 'px';
+        setCaret(0);                                    // hop to the left edge of the new line
+        setCaretTop();
+        // after the last term the cycle starts over, so the list never ends
+        const word = nextWord == null ? INTRO_WORDS[0] : nextWord;
+        const nextIndex = nextWord == null ? 0 : index + 1;
+        setTimeout(() => {
+          typeWord(line, word, () => pressEnter(nextIndex));
+        }, INTRO_RISE_MS);
+      };
+
+      const startWord = (index, blinks) => {
+        const word = INTRO_WORDS[index];
+        const line = buildLine(word);
+        active = line;
+        place();
+        caret.style.fontSize = line.fs + 'px';
+        setCaret(0);
+        setCaretTop();
+        setTimeout(() => {
+          typeWord(line, word, () => pressEnter(index));
+        }, blinks * INTRO_BLINK_MS);
+      };
+
+      setOrigin();
+      startWord(0, INTRO_BLINKS);
+
+      // keep the top origin right on resize
+      addEventListener('resize', () => {
+        if (introTitle.clientWidth < INTRO_MIN_W) return;
+        setOrigin();
+        setCaretTop();
+      });
+    }
   }
 
   // Sfera background videos: load and play only while on screen, pause otherwise
@@ -483,6 +762,16 @@
         toTopEl.classList.toggle('to-top--myexport', isMyexport);
         // nothing to scroll up to on the first panel
         toTopEl.classList.toggle('to-top--hidden', i === 0);
+      }
+      // Replay the cover's entrance animation whenever it becomes active.
+      if (introCopy) {
+        if (i === 0) {
+          introCopy.classList.remove('is-in');
+          void introCopy.offsetWidth;   // restart the CSS animation
+          introCopy.classList.add('is-in');
+        } else {
+          introCopy.classList.remove('is-in');
+        }
       }
       // Restart the active panel's clip; park every other one so nothing runs
       // off-screen. Re-entering the panel replays it from the top.
@@ -876,7 +1165,12 @@
       if (idx !== active) { active = idx; setActive(idx); }
       // while a swap is in flight the bar keeps the colour it had; it flips to
       // the new panel only when the motion has settled (animating === false)
-      if (!animating) setNavbar(active);
+      if (!animating) {
+        setNavbar(active);
+        // the dot strip only appears once the swap has settled — at the end of
+        // the scroll, not as it starts — and it is hidden on the cover panel
+        if (dotsNav) dotsNav.classList.toggle('dots--hidden', active === 0);
+      }
     };
 
     const onWorkScroll = () => {
@@ -1055,6 +1349,9 @@
 
     const toTop = document.getElementById('toTop');
     if (toTop) toTop.addEventListener('click', () => goTo(0));
+
+    const introScroll = document.getElementById('introScroll');
+    if (introScroll) introScroll.addEventListener('click', () => goTo(target + 1));
 
     // Deep link (#pNN from the home-page cards): land straight on the linked
     // panel before revealing the page, so the top panel never flashes first.
